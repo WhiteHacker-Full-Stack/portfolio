@@ -1,0 +1,21 @@
+{
+  "name": "whitehacker-portfolio",
+  "private": true,
+  "workspaces": [
+    "server",
+    "web"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,web -c cyan,magenta \"npm:dev:server\" \"npm:dev:web\"",
+    "dev:server": "npm run dev -w server",
+    "dev:web": "npm run dev -w web",
+    "build": "npm run build -w server && npm run build -w web",
+    "db:migrate": "prisma migrate dev --schema=server/prisma/schema.prisma",
+    "db:generate": "prisma generate --schema=server/prisma/schema.prisma",
+    "db:seed": "tsx server/prisma/seed.ts",
+    "db:studio": "prisma studio --schema=server/prisma/schema.prisma"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

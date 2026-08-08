@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// SQLite has no native enum support in Prisma, so `category` and `status` are
+// stored as strings and validated against Category/Status in src/lib/enums.ts.
+model Project {
+  id          String     @id @default(cuid())
+  title       String
+  slug        String     @unique
+  category    String
+  description String
+  /// Comma-separated tech chips shown on the project page. Exposed as an array by the API.
+  tech        String     @default("")
+  coverImage  String?
+  status      String     @default("IN_PROGRESS")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  posts       BlogPost[]
+}
+
+model BlogPost {
+  id             String    @id @default(cuid())
+  projectId      String
+  project        Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title          String
+  content        String
+  image          String?
+  sentToTelegram Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  comments       Comment[]
+}
+
+model Visitor {
+  id          String    @id @default(cuid())
+  deviceToken String    @unique
+  username    String
+  createdAt   DateTime  @default(now())
+  comments    Comment[]
+}
+
+model Comment {
+  id         String   @id @default(cuid())
+  blogPostId String
+  blogPost   BlogPost @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
+  visitorId  String
+  visitor    Visitor  @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+  text       String
+  createdAt  DateTime @default(now())
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  title     String
+  fileUrl   String
+  type      String
+  sizeBytes Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+model YoutubeVideo {
+  id         String   @id @default(cuid())
+  title      String
+  youtubeUrl String
+  youtubeId  String
+  addedAt    DateTime @default(now())
+}
+
+model AdminUser {
+  id           String @id @default(cuid())
+  username     String @unique
+  passwordHash String
+}

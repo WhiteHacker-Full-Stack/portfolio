@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: #0B0F14; }
+  * { box-sizing: border-box; }
+  a { color: #4FD1FF; text-decoration: none; }
+  a:hover { color: #E8EDF2; }
+  input, textarea, select, button { font-family: inherit; }
+  @keyframes blink { 0%, 49% { opacity: 1 } 50%, 100% { opacity: 0 } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important } }
+</style>
+</helmet>
+<div style="min-height: 100vh; display: flex; background: #0B0F14; background-image: linear-gradient(rgba(79,209,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(79,209,255,0.05) 1px, transparent 1px), radial-gradient(circle at 18% 22%, rgba(79,209,255,0.06), transparent 45%); background-size: 46px 46px, 46px 46px, 100% 100%; color: #E8EDF2; font-family: Inter, system-ui, sans-serif;">
+
+  <aside style="width: 268px; flex: 0 0 268px; border-right: 1px solid #26323D; background: rgba(15,23,32,0.72); padding: 26px 18px 20px; display: flex; flex-direction: column; gap: 26px; position: sticky; top: 0; height: 100vh;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 15px; letter-spacing: 0.06em; display: flex; align-items: center; gap: 2px; color: #F5F7FA;">
+      <span style="color: #4FD1FF;">&gt;_</span>WhiteHacker<span style="display: inline-block; width: 8px; height: 15px; background: #4FD1FF; animation: blink 1.1s steps(1) 3;"></span>
+    </div>
+
+    <nav style="display: flex; flex-direction: column; gap: 1px;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6; letter-spacing: 0.08em; padding: 0 8px 10px;">whitehacker@portfolio</div>
+      <sc-for list="{{ nav }}" as="item" hint-placeholder-count="8">
+        <button type="button" onClick="{{ item.onClick }}" style="all: unset; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 7px 8px; border-radius: 6px; border-left: 2px solid transparent; color: {{ item.color }}; background: {{ item.bg }}; border-left-color: {{ item.edge }};" style-hover="background: #1B2530; color: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">
+          <span style="color: #26323D; font-size: 12px;">{{ item.branch }}</span>
+          <span style="padding-left: {{ item.indent }};">{{ item.label }}</span>
+        </button>
+      </sc-for>
+    </nav>
+
+    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 14px;">
+      <div style="display: flex; gap: 10px;">
+        <a href="#" style="width: 36px; height: 36px; border: 1px solid #26323D; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6;" style-hover="color: #4FD1FF; border-color: #4FD1FF;">TG</a>
+        <a href="#" style="width: 36px; height: 36px; border: 1px solid #26323D; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6;" style-hover="color: #4FD1FF; border-color: #4FD1FF;">YT</a>
+      </div>
+      <button type="button" onClick="{{ openAdmin }}" style="all: unset; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #4a5764; letter-spacing: 0.06em;" style-hover="color: #8B99A6;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">~/admin</button>
+    </div>
+  </aside>
+
+  <main style="flex: 1; min-width: 0; padding: 30px 44px 90px; max-width: 1180px;">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #8B99A6; padding-bottom: 26px; border-bottom: 1px solid #26323D; margin-bottom: 34px;">
+      <span style="color: #39FF88;">{{ promptPath }}</span><span style="color: #E8EDF2;">{{ promptCmd }}</span><span style="display: inline-block; width: 7px; height: 13px; background: #4FD1FF; vertical-align: -2px; animation: blink 1s steps(1) infinite;"></span>
+    </div>
+
+    <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+      <section data-screen-label="Home" style="display: flex; flex-direction: column; gap: 54px;">
+        <div style="border: 1px solid #26323D; border-radius: 12px; background: #0F1720; overflow: hidden;">
+          <div style="display: flex; align-items: center; gap: 8px; padding: 11px 14px; border-bottom: 1px solid #26323D; background: #141C24;">
+            <span style="width: 10px; height: 10px; border-radius: 50%; background: #26323D; display: block;"></span>
+            <span style="width: 10px; height: 10px; border-radius: 50%; background: #26323D; display: block;"></span>
+            <span style="width: 10px; height: 10px; border-radius: 50%; background: #26323D; display: block;"></span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6; margin-left: 8px;">bash — whoami</span>
+          </div>
+          <div style="padding: 34px 34px 40px; display: flex; flex-direction: column; gap: 22px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #8B99A6;"><span style="color: #39FF88;">$ </span>whoami</div>
+            <h1 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 46px; line-height: 1.1; letter-spacing: -0.01em; color: #F5F7FA;">Men WhiteHacker —<br />dasturchi va quruvchi.</h1>
+            <p style="margin: 0; max-width: 620px; font-size: 16px; line-height: 1.7; color: #8B99A6; text-wrap: pretty;">Next.js va Node.js bilan mahsulot quraman, AI'ni kundalik ish oqimimga qo'shaman va startaplarimni ochiq holda olib boraman. Bu sayt tugallangan CV emas — har bir loyiha ustidagi ishimni yozib boradigan jonli jurnal.</p>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; padding-top: 6px;">
+              <button type="button" onClick="{{ goProjects }}" style="all: unset; cursor: pointer; background: #F5F7FA; color: #0B0F14; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; padding: 13px 22px; border-radius: 8px;" style-hover="background: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 3px;">Loyihalarni ko'rish</button>
+              <button type="button" onClick="{{ goDocs }}" style="all: unset; cursor: pointer; border: 1px solid #26323D; color: #E8EDF2; font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 12px 22px; border-radius: 8px;" style-hover="border-color: #4FD1FF; color: #4FD1FF;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 3px;">CV yuklab olish</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 18px;">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px;">
+            <h2 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px; letter-spacing: 0.02em;">So'nggi faoliyat</h2>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6;">oxirgi 3 yozuv</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+            <sc-for list="{{ recentPosts }}" as="post" hint-placeholder-count="3">
+              <button type="button" onClick="{{ post.open }}" style="all: unset; cursor: pointer; display: flex; flex-direction: column; gap: 10px; border: 1px solid #26323D; background: #141C24; border-radius: 10px; padding: 18px;" style-hover="background: #1B2530; border-color: #4FD1FF;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #4FD1FF;">{{ post.project }}</span>
+                <span style="font-size: 15px; font-weight: 600; line-height: 1.4; color: #E8EDF2;">{{ post.title }}</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6;">{{ post.date }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid #26323D; border-radius: 10px; overflow: hidden; background: #0F1720;">
+          <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+            <div style="padding: 22px 20px; border-right: 1px solid #26323D; display: flex; flex-direction: column; gap: 6px;">
+              <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 28px; color: #F5F7FA;">{{ s.value }}</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6; letter-spacing: 0.04em;">{{ s.label }}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 18px;">
+          <h2 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px;">Ijtimoiy tarmoqlarda kuzatib boring</h2>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div style="border: 1px solid #26323D; background: #141C24; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px;">Telegram kanal</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6;">2 940 obunachi</span>
+              </div>
+              <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #8B99A6;">“Prisma migratsiyalarini Capacitor build'i bilan birga olib borish — bugungi eslatma.”</p>
+              <a href="#" style="font-family: 'IBM Plex Mono', monospace; font-size: 12px;">t.me/whitehacker →</a>
+            </div>
+            <div style="border: 1px solid #26323D; background: #141C24; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px;">YouTube kanal</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6;">11.2K obunachi</span>
+              </div>
+              <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #8B99A6;">Oxirgi video: “Next.js + Capacitor: bitta kodbaza, ikkita platforma”</p>
+              <button type="button" onClick="{{ goYoutube }}" style="all: unset; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #4FD1FF;" style-hover="color: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">Barcha videolar →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isAbout }}">
+      <section data-screen-label="About" style="display: flex; flex-direction: column; gap: 48px;">
+        <div style="display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px;">
+          <div style="display: flex; flex-direction: column; gap: 18px;">
+            <h1 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 32px;">Men haqimda</h1>
+            <p style="margin: 0; font-size: 15px; line-height: 1.75; color: #8B99A6; text-wrap: pretty;">Men mahsulotni boshidan oxirigacha quraman: interfeys, API, ma'lumotlar bazasi va deploy. Ko'p yillar davomida veb bilan ishlaganimdan keyin mobil tomonga o'tdim — hozir bitta kodbazadan web va Android uchun ilova chiqarish men uchun odatiy ish oqimi.</p>
+            <p style="margin: 0; font-size: 15px; line-height: 1.75; color: #8B99A6; text-wrap: pretty;">AI'ni ishimda vosita sifatida ishlataman: prototip, refactoring va hujjatlashtirish uchun. Qo'lda yozgan kodim va AI bilan tezlashtirgan loyihalarimni alohida ajratib ko'rsataman — chunki ikkalasi boshqa-boshqa mahorat.</p>
+            <p style="margin: 0; font-size: 15px; line-height: 1.75; color: #8B99A6; text-wrap: pretty;">Bo'sh vaqtimda uy serverimni sozlayman, tarmoq bilan o'ynayman va o'rganganlarimni Telegram kanalimda yozib boraman.</p>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 18px;">
+            <h2 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 15px; letter-spacing: 0.06em; color: #8B99A6;">TECH STACK</h2>
+            <sc-for list="{{ stack }}" as="group" hint-placeholder-count="5">
+              <div style="display: flex; flex-direction: column; gap: 9px; padding-bottom: 14px; border-bottom: 1px solid #26323D;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #4FD1FF; letter-spacing: 0.06em;">{{ group.name }}</span>
+                <div style="display: flex; flex-wrap: wrap; gap: 7px;">
+                  <sc-for list="{{ group.items }}" as="tech" hint-placeholder-count="4">
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; border: 1px solid #26323D; background: #141C24; color: #E8EDF2; padding: 5px 10px; border-radius: 999px;">{{ tech }}</span>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <h2 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px;">Yo'l tarixi</h2>
+          <div style="display: flex; flex-direction: column;">
+            <sc-for list="{{ timeline }}" as="t" hint-placeholder-count="4">
+              <div style="display: grid; grid-template-columns: 92px 1fr; gap: 20px; padding-bottom: 26px;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8B99A6; padding-top: 2px;">{{ t.year }}</span>
+                <div style="border-left: 1px solid #26323D; padding: 0 0 0 22px; position: relative;">
+                  <span style="position: absolute; left: -5px; top: 5px; width: 9px; height: 9px; border-radius: 50%; background: #0B0F14; border: 1px solid #4FD1FF; display: block;"></span>
+                  <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 15px; font-weight: 600;">{{ t.title }}</span>
+                    <span style="font-size: 14px; line-height: 1.6; color: #8B99A6;">{{ t.text }}</span>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isProjects }}">
+      <section data-screen-label="Projects" style="display: flex; flex-direction: column; gap: 26px;">
+        <h1 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 32px;">Loyihalar</h1>
+        <div style="display: flex; gap: 4px; border-bottom: 1px solid #26323D;">
+          <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="3">
+            <button type="button" onClick="{{ tab.onClick }}" style="all: unset; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 11px 16px; border-bottom: 2px solid transparent; color: {{ tab.color }}; border-bottom-color: {{ tab.edge }};" style-hover="color: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">{{ tab.label }}</button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ isStartupTab }}">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #FFB454; display: flex; align-items: center; gap: 8px;">
+            <span style="width: 6px; height: 6px; border-radius: 50%; background: #FFB454; display: block;"></span>
+            Startaplar doimiy yangilanadi — bu bo'limdagi yozuvlar tugamaydi.
+          </div>
+        </sc-if>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;">
+          <sc-for list="{{ visibleProjects }}" as="p" hint-placeholder-count="6">
+            <button type="button" onClick="{{ p.open }}" style="all: unset; cursor: pointer; display: flex; flex-direction: column; border: 1px solid #26323D; background: #141C24; border-radius: 10px; overflow: hidden;" style-hover="background: #1B2530; border-color: #4FD1FF;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">
+              <span style="height: 132px; display: flex; align-items: center; justify-content: center; background-color: #0F1720; background-image: repeating-linear-gradient(135deg, rgba(79,209,255,0.10) 0 6px, transparent 6px 14px); font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #8B99A6; letter-spacing: 0.08em;">{{ p.cover }}</span>
+              <span style="padding: 16px 16px 18px; display: flex; flex-direction: column; gap: 10px;">
+                <span style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                  <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 15px; color: #F5F7FA; min-width: 0; overflow-wrap: anywhere;">{{ p.name }}</span>
+                  <span style="flex: 0 0 auto; white-space: nowrap; font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 999px; color: {{ p.statusColor }}; background: {{ p.statusBg }};">{{ p.status }}</span>
+                </span>
+                <span style="font-size: 13px; line-height: 1.6; color: #8B99A6;">{{ p.desc }}</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #4a5764;">yangilangan {{ p.updated }}</span>
+              </span>
+            </button>
+          </sc-for>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isDetail }}">
+      <section data-screen-label="Project detail" style="display: flex; flex-direction: column; gap: 36px;">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <button type="button" onClick="{{ goProjects }}" style="all: unset; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8B99A6;" style-hover="color: #4FD1FF;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">← cd ../projects</button>
+          <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+            <h1 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 34px;">{{ active.name }}</h1>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 4px 10px; border-radius: 999px; color: {{ active.statusColor }}; background: {{ active.statusBg }};">{{ active.status }}</span>
+          </div>
+          <div style="display: flex; gap: 7px; flex-wrap: wrap;">
+            <sc-for list="{{ active.tech }}" as="tech" hint-placeholder-count="4">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; border: 1px solid #26323D; padding: 5px 10px; border-radius: 999px; color: #E8EDF2;">{{ tech }}</span>
+            </sc-for>
+          </div>
+          <p style="margin: 0; max-width: 680px; font-size: 15px; line-height: 1.75; color: #8B99A6; text-wrap: pretty;">{{ active.long }}</p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <h2 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px;">Loyiha jurnali</h2>
+          <div style="display: flex; flex-direction: column;">
+            <sc-for list="{{ active.log }}" as="entry" hint-placeholder-count="3">
+              <div style="display: grid; grid-template-columns: 104px 1fr; gap: 20px; padding-bottom: 28px;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8B99A6; padding-top: 3px;">{{ entry.date }}</span>
+                <div style="border-left: 1px solid #26323D; padding-left: 22px; position: relative; display: flex; flex-direction: column; gap: 10px;">
+                  <span style="position: absolute; left: -5px; top: 6px; width: 9px; height: 9px; border-radius: 50%; background: #0B0F14; border: 1px solid #4FD1FF; display: block;"></span>
+                  <span style="font-size: 16px; font-weight: 600;">{{ entry.title }}</span>
+                  <span style="font-size: 14px; line-height: 1.7; color: #8B99A6;">{{ entry.text }}</span>
+                  <button type="button" onClick="{{ openTelegram }}" style="all: unset; cursor: pointer; align-self: flex-start; font-family: 'IBM Plex Mono', monospace; font-size: 11px; border: 1px solid #26323D; padding: 6px 11px; border-radius: 6px; color: #8B99A6;" style-hover="color: #4FD1FF; border-color: #4FD1FF;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">Telegram'da ulashish</button>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid #26323D; padding-top: 28px; display: flex; flex-direction: column; gap: 18px;">
+          <h2 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px;">Izohlar</h2>
+          <div style="border: 1px solid #26323D; background: #141C24; border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8B99A6;">{{ commenterLine }}</span>
+              <button type="button" onClick="{{ openNameModal }}" style="all: unset; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #4FD1FF;" style-hover="color: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">Ismni o'zgartirish</button>
+            </div>
+            <textarea placeholder="Fikringizni yozing…" onChange="{{ onDraft }}" style="background: #0F1720; border: 1px solid #26323D; border-radius: 8px; color: #E8EDF2; font-size: 14px; line-height: 1.6; padding: 12px; min-height: 84px; resize: vertical;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 1px; border-color: #4FD1FF;"></textarea>
+            <button type="button" onClick="{{ submitComment }}" style="all: unset; cursor: pointer; align-self: flex-start; background: #F5F7FA; color: #0B0F14; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; padding: 10px 18px; border-radius: 7px;" style-hover="background: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 3px;">Izohni yuborish</button>
+          </div>
+          <sc-if value="{{ noComments }}">
+            <div style="font-size: 14px; color: #8B99A6; padding: 8px 0;">Hali izoh yo'q — birinchi bo'lib fikringizni yozing.</div>
+          </sc-if>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <sc-for list="{{ comments }}" as="c" hint-placeholder-count="2">
+              <div style="border: 1px solid #26323D; border-radius: 10px; padding: 15px 16px; display: flex; flex-direction: column; gap: 7px; background: #0F1720;">
+                <span style="display: flex; gap: 10px; align-items: baseline;">
+                  <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; color: #4FD1FF;">{{ c.name }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #4a5764;">{{ c.date }}</span>
+                </span>
+                <span style="font-size: 14px; line-height: 1.6; color: #E8EDF2;">{{ c.text }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isDocs }}">
+      <section data-screen-label="Docs" style="display: flex; flex-direction: column; gap: 24px;">
+        <h1 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 32px;">Hujjatlar</h1>
+        <div style="display: flex; flex-direction: column; gap: 12px; max-width: 760px;">
+          <sc-for list="{{ docs }}" as="d" hint-placeholder-count="3">
+            <div style="display: flex; align-items: center; gap: 18px; border: 1px solid #26323D; background: #141C24; border-radius: 10px; padding: 16px 18px;">
+              <span style="width: 40px; height: 48px; border: 1px solid #26323D; border-radius: 5px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 5px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #8B99A6; background: #0F1720;">PDF</span>
+              <span style="display: flex; flex-direction: column; gap: 5px; flex: 1;">
+                <span style="font-size: 15px; font-weight: 600;">{{ d.name }}</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6;">{{ d.meta }}</span>
+              </span>
+              <span style="display: flex; gap: 10px;">
+                <button type="button" style="all: unset; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 12px; border: 1px solid #26323D; padding: 8px 14px; border-radius: 7px; color: #E8EDF2;" style-hover="border-color: #4FD1FF; color: #4FD1FF;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">Ko'rish</button>
+                <button type="button" style="all: unset; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: #F5F7FA; color: #0B0F14; padding: 8px 14px; border-radius: 7px;" style-hover="background: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">Yuklab olish</button>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isYoutube }}">
+      <section data-screen-label="YouTube" style="display: flex; flex-direction: column; gap: 26px;">
+        <h1 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 32px;">YouTube</h1>
+        <div style="border: 1px solid #26323D; border-radius: 12px; background: #0F1720; padding: 26px 28px; display: flex; align-items: center; justify-content: space-between; gap: 24px;">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 20px;">@whitehacker</span>
+            <span style="font-size: 14px; color: #8B99A6;">Har hafta bitta amaliy video: stack, debug va real loyiha ustidagi ish.</span>
+          </div>
+          <a href="#" style="background: #F5F7FA; color: #0B0F14; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; padding: 13px 22px; border-radius: 8px; white-space: nowrap;" style-hover="background: #E8EDF2; color: #0B0F14;">Kanalga obuna bo'lish</a>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;">
+          <sc-for list="{{ videos }}" as="v" hint-placeholder-count="6">
+            <button type="button" onClick="{{ v.open }}" style="all: unset; cursor: pointer; display: flex; flex-direction: column; gap: 12px;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 3px;">
+              <span style="aspect-ratio: 16/9; border-radius: 10px; border: 1px solid #26323D; display: flex; align-items: center; justify-content: center; background-color: #0F1720; background-image: repeating-linear-gradient(135deg, rgba(79,209,255,0.10) 0 6px, transparent 6px 14px); font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #8B99A6;">{{ v.thumb }}</span>
+              <span style="font-size: 14px; font-weight: 600; line-height: 1.5;">{{ v.title }}</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6;">{{ v.date }} · {{ v.views }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isAdminPanel }}">
+      <section data-screen-label="Admin panel" style="display: flex; gap: 28px;">
+        <div style="width: 132px; flex: 0 0 132px; display: flex; flex-direction: column; gap: 2px; border-right: 1px solid #26323D; padding-right: 14px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6; padding: 0 8px 10px;">ADMIN</span>
+          <sc-for list="{{ adminNav }}" as="a" hint-placeholder-count="6">
+            <button type="button" onClick="{{ a.onClick }}" style="all: unset; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 8px 10px; border-radius: 6px; color: {{ a.color }}; background: {{ a.bg }};" style-hover="background: #1B2530;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">{{ a.label }}</button>
+          </sc-for>
+          <button type="button" onClick="{{ logout }}" style="all: unset; cursor: pointer; margin-top: 16px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #4a5764; padding: 0 10px;" style-hover="color: #8B99A6;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">chiqish</button>
+        </div>
+
+        <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 20px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+            <h1 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 24px;">{{ adminTitle }}</h1>
+            <button type="button" onClick="{{ adminPrimaryAction }}" style="all: unset; cursor: pointer; background: #F5F7FA; color: #0B0F14; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; padding: 10px 16px; border-radius: 7px;" style-hover="background: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 3px;">{{ adminPrimaryLabel }}</button>
+          </div>
+
+          <sc-if value="{{ adminIsProjects }}">
+            <div style="border: 1px solid #26323D; border-radius: 10px; overflow-x: auto;">
+              <div style="min-width: 680px; display: grid; grid-template-columns: 1.5fr 1fr 1.1fr 1fr 140px; gap: 12px; padding: 12px 16px; background: #141C24; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6; letter-spacing: 0.04em;">
+                <span>NOMI</span><span>KATEGORIYA</span><span>STATUS</span><span>YANGILANDI</span><span>AMAL</span>
+              </div>
+              <sc-for list="{{ allProjects }}" as="p" hint-placeholder-count="6">
+                <div style="min-width: 680px; display: grid; grid-template-columns: 1.5fr 1fr 1.1fr 1fr 140px; gap: 12px; padding: 13px 16px; border-top: 1px solid #26323D; align-items: center; font-size: 13px;">
+                  <span style="font-weight: 600;">{{ p.name }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8B99A6; white-space: nowrap;">{{ p.categoryLabel }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; white-space: nowrap; color: {{ p.statusColor }};">{{ p.status }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8B99A6; white-space: nowrap;">{{ p.updated }}</span>
+                  <span style="display: flex; gap: 12px; justify-content: flex-end;">
+                    <button type="button" onClick="{{ openNewProject }}" style="all: unset; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #4FD1FF;" style-hover="color: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">Tahrir</button>
+                    <button type="button" onClick="{{ openDelete }}" style="all: unset; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6;" style-hover="color: #ff6b6b;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">O'chir</button>
+                  </span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ adminIsBlogs }}">
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <sc-for list="{{ allPosts }}" as="post" hint-placeholder-count="4">
+                <div style="border: 1px solid #26323D; background: #141C24; border-radius: 10px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+                  <span style="display: flex; flex-direction: column; gap: 6px; flex: 1 1 220px; min-width: 200px;">
+                    <span style="font-size: 15px; font-weight: 600;">{{ post.title }}</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6;">{{ post.project }} · {{ post.date }}</span>
+                  </span>
+                  <button type="button" onClick="{{ openTelegram }}" style="all: unset; cursor: pointer; flex: 0 0 auto; white-space: nowrap; font-family: 'IBM Plex Mono', monospace; font-size: 12px; border: 1px solid #4FD1FF; color: #4FD1FF; padding: 8px 13px; border-radius: 7px;" style-hover="background: #4FD1FF; color: #0B0F14;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">Telegram'ga yubor</button>
+                  <button type="button" onClick="{{ openDelete }}" style="all: unset; cursor: pointer; flex: 0 0 auto; white-space: nowrap; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8B99A6;" style-hover="color: #ff6b6b;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">O'chirish</button>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ adminIsComments }}">
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <sc-for list="{{ moderationComments }}" as="c" hint-placeholder-count="3">
+                <div style="border: 1px solid #26323D; background: #141C24; border-radius: 10px; padding: 15px 18px; display: flex; align-items: flex-start; gap: 18px;">
+                  <span style="display: flex; flex-direction: column; gap: 6px; flex: 1;">
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6;">{{ c.name }} · {{ c.date }} · {{ c.on }}</span>
+                    <span style="font-size: 14px; line-height: 1.6;">{{ c.text }}</span>
+                  </span>
+                  <button type="button" onClick="{{ openDelete }}" style="all: unset; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8B99A6;" style-hover="color: #ff6b6b;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">O'chirish</button>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ adminIsYoutube }}">
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <sc-for list="{{ videos }}" as="v" hint-placeholder-count="4">
+                <div style="border: 1px solid #26323D; background: #141C24; border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; gap: 16px;">
+                  <span style="width: 92px; height: 52px; border-radius: 6px; border: 1px solid #26323D; background-color: #0F1720; background-image: repeating-linear-gradient(135deg, rgba(79,209,255,0.10) 0 6px, transparent 6px 14px); display: block;"></span>
+                  <span style="flex: 1; display: flex; flex-direction: column; gap: 5px;">
+                    <span style="font-size: 14px; font-weight: 600;">{{ v.title }}</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6;">{{ v.url }}</span>
+                  </span>
+                  <button type="button" onClick="{{ openDelete }}" style="all: unset; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8B99A6;" style-hover="color: #ff6b6b;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">O'chirish</button>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ adminIsOther }}">
+            <div style="border: 1px dashed #26323D; border-radius: 10px; padding: 40px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8B99A6;">{{ adminEmptyText }}</div>
+          </sc-if>
+        </div>
+      </section>
+    </sc-if>
+  </main>
+
+  <sc-if value="{{ overlayOpen }}">
+    <div style="position: fixed; inset: 0; background: rgba(5,8,11,0.76); display: flex; align-items: center; justify-content: center; padding: 32px; z-index: 50;">
+
+      <sc-if value="{{ modalLogin }}">
+        <div style="width: 372px; border: 1px solid #4FD1FF; background: #0F1720; border-radius: 12px; padding: 26px; display: flex; flex-direction: column; gap: 18px;">
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 17px;">Admin kirish</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6;">faqat sayt egasi uchun</span>
+          </div>
+          <input placeholder="Username" style="background: #141C24; border: 1px solid #26323D; border-radius: 8px; padding: 11px 13px; color: #E8EDF2; font-size: 14px;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 1px;" />
+          <input type="password" placeholder="Parol" style="background: #141C24; border: 1px solid #26323D; border-radius: 8px; padding: 11px 13px; color: #E8EDF2; font-size: 14px;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 1px;" />
+          <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button type="button" onClick="{{ closeModal }}" style="all: unset; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 12px; border: 1px solid #26323D; padding: 10px 16px; border-radius: 7px; color: #8B99A6;" style-hover="color: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">Bekor qilish</button>
+            <button type="button" onClick="{{ login }}" style="all: unset; cursor: pointer; background: #F5F7FA; color: #0B0F14; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; padding: 10px 18px; border-radius: 7px;" style-hover="background: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 3px;">Kirish</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ modalNewProject }}">
+        <div style="width: 540px; border: 1px solid #26323D; background: #0F1720; border-radius: 12px; padding: 26px; display: flex; flex-direction: column; gap: 16px;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 17px;">Yangi loyiha qo'shish</span>
+          <input placeholder="Loyiha nomi" style="background: #141C24; border: 1px solid #26323D; border-radius: 8px; padding: 11px 13px; color: #E8EDF2; font-size: 14px;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 1px;" />
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <select style="background: #141C24; border: 1px solid #26323D; border-radius: 8px; padding: 11px 13px; color: #E8EDF2; font-size: 14px;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 1px;">
+              <option>Qo'lda qilingan</option>
+              <option>AI bilan</option>
+              <option>Startap</option>
+            </select>
+            <select style="background: #141C24; border: 1px solid #26323D; border-radius: 8px; padding: 11px 13px; color: #E8EDF2; font-size: 14px;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 1px;">
+              <option>Live</option>
+              <option>Ishlab chiqilmoqda</option>
+              <option>Arxiv</option>
+            </select>
+          </div>
+          <textarea placeholder="Qisqa tavsif" style="background: #141C24; border: 1px solid #26323D; border-radius: 8px; padding: 11px 13px; color: #E8EDF2; font-size: 14px; min-height: 88px; resize: vertical;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 1px;"></textarea>
+          <div style="border: 1px dashed #26323D; border-radius: 8px; padding: 22px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6;">cover rasmni bu yerga tashlang — 1200×630</div>
+          <div style="display: flex; gap: 10px; justify-content: flex-end; padding-top: 4px;">
+            <button type="button" onClick="{{ closeModal }}" style="all: unset; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 12px; border: 1px solid #26323D; padding: 10px 16px; border-radius: 7px; color: #8B99A6;" style-hover="color: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">Bekor qilish</button>
+            <button type="button" onClick="{{ closeModal }}" style="all: unset; cursor: pointer; background: #F5F7FA; color: #0B0F14; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; padding: 10px 18px; border-radius: 7px;" style-hover="background: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 3px;">Saqlash</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ modalNewPost }}">
+        <div style="width: 580px; border: 1px solid #26323D; background: #0F1720; border-radius: 12px; padding: 26px; display: flex; flex-direction: column; gap: 16px;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 17px;">Yangi blog-yozuv</span>
+          <input placeholder="Sarlavha" style="background: #141C24; border: 1px solid #26323D; border-radius: 8px; padding: 11px 13px; color: #E8EDF2; font-size: 14px;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 1px;" />
+          <div style="border: 1px solid #26323D; border-radius: 8px; overflow: hidden;">
+            <div style="display: flex; gap: 2px; padding: 7px 9px; background: #141C24; border-bottom: 1px solid #26323D; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8B99A6;">
+              <span style="padding: 3px 7px;">B</span><span style="padding: 3px 7px;">i</span><span style="padding: 3px 7px;">&lt;/&gt;</span><span style="padding: 3px 7px;">link</span>
+            </div>
+            <textarea placeholder="Yozuv matni…" style="width: 100%; background: #141C24; border: 0; padding: 13px; color: #E8EDF2; font-size: 14px; min-height: 132px; resize: vertical;" style-focus="outline: 2px solid #4FD1FF; outline-offset: -2px;"></textarea>
+          </div>
+          <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button type="button" onClick="{{ closeModal }}" style="all: unset; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 12px; border: 1px solid #26323D; padding: 10px 16px; border-radius: 7px; color: #8B99A6;" style-hover="color: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">Faqat saqlash</button>
+            <button type="button" onClick="{{ openTelegram }}" style="all: unset; cursor: pointer; background: #F5F7FA; color: #0B0F14; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; padding: 10px 18px; border-radius: 7px;" style-hover="background: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 3px;">Saqlash va Telegram'ga yubor</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ modalTelegram }}">
+        <div style="width: 440px; border: 1px solid #26323D; background: #0F1720; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 16px;">Telegram kanalga yuborishni tasdiqlang</span>
+          <div style="border: 1px solid #26323D; border-radius: 10px; background: #141C24; overflow: hidden;">
+            <div style="height: 118px; background-color: #0F1720; background-image: repeating-linear-gradient(135deg, rgba(79,209,255,0.10) 0 6px, transparent 6px 14px); display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #8B99A6;">post rasmi</div>
+            <div style="padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px;">
+              <span style="font-weight: 600; font-size: 14px;">Prisma migratsiyasi va offline sinxronizatsiya</span>
+              <span style="font-size: 13px; line-height: 1.6; color: #8B99A6;">Offline navbat qanday ishlaydi va konfliktni qanday hal qildim — qisqa yozuv.</span>
+              <span style="align-self: flex-start; font-family: 'IBM Plex Mono', monospace; font-size: 11px; border: 1px solid #4FD1FF; color: #4FD1FF; padding: 6px 12px; border-radius: 6px;">Batafsil</span>
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button type="button" onClick="{{ closeModal }}" style="all: unset; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 12px; border: 1px solid #26323D; padding: 10px 16px; border-radius: 7px; color: #8B99A6;" style-hover="color: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">Bekor qilish</button>
+            <button type="button" onClick="{{ closeModal }}" style="all: unset; cursor: pointer; background: #F5F7FA; color: #0B0F14; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; padding: 10px 18px; border-radius: 7px;" style-hover="background: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 3px;">Yuborish</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ modalVideoAdd }}">
+        <div style="width: 440px; border: 1px solid #26323D; background: #0F1720; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 16px;">YouTube video qo'shish</span>
+          <input placeholder="https://youtube.com/watch?v=…" style="background: #141C24; border: 1px solid #26323D; border-radius: 8px; padding: 11px 13px; color: #E8EDF2; font-size: 14px; font-family: 'IBM Plex Mono', monospace;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 1px;" />
+          <div style="aspect-ratio: 16/9; border-radius: 10px; border: 1px solid #26323D; background-color: #0F1720; background-image: repeating-linear-gradient(135deg, rgba(79,209,255,0.10) 0 6px, transparent 6px 14px); display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #8B99A6;">thumbnail preview link kiritilgach chiqadi</div>
+          <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button type="button" onClick="{{ closeModal }}" style="all: unset; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 12px; border: 1px solid #26323D; padding: 10px 16px; border-radius: 7px; color: #8B99A6;" style-hover="color: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">Bekor qilish</button>
+            <button type="button" onClick="{{ closeModal }}" style="all: unset; cursor: pointer; background: #F5F7FA; color: #0B0F14; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; padding: 10px 18px; border-radius: 7px;" style-hover="background: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 3px;">Qo'shish</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ modalName }}">
+        <div style="width: 366px; border: 1px solid #26323D; background: #0F1720; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 14px;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 16px;">Ismingizni kiriting</span>
+          <span style="font-size: 13px; line-height: 1.6; color: #8B99A6;">Izohlaringiz shu nom ostida ko'rinadi. Keyinroq o'zgartirsangiz bo'ladi.</span>
+          <input placeholder="Ismingiz?" onChange="{{ onNameInput }}" style="background: #141C24; border: 1px solid #26323D; border-radius: 8px; padding: 11px 13px; color: #E8EDF2; font-size: 14px;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 1px;" />
+          <button type="button" onClick="{{ saveName }}" style="all: unset; cursor: pointer; align-self: flex-end; background: #F5F7FA; color: #0B0F14; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; padding: 10px 18px; border-radius: 7px;" style-hover="background: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 3px;">Davom etish</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ modalVideoPlay }}">
+        <div style="width: min(1000px, 92vw); display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 16px;">{{ playingTitle }}</span>
+            <button type="button" onClick="{{ closeModal }}" style="all: unset; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8B99A6;" style-hover="color: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">yopish ✕</button>
+          </div>
+          <div style="aspect-ratio: 16/9; border: 1px solid #26323D; border-radius: 12px; background: #05080B; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6;">YouTube embed player</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ modalDelete }}">
+        <div style="width: 380px; border: 1px solid #26323D; background: #0F1720; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 14px;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 16px;">O'chirishni tasdiqlang</span>
+          <span style="font-size: 13px; line-height: 1.6; color: #8B99A6;">Bu amalni bekor qilib bo'lmaydi.</span>
+          <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button type="button" onClick="{{ closeModal }}" style="all: unset; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 12px; border: 1px solid #26323D; padding: 10px 16px; border-radius: 7px; color: #8B99A6;" style-hover="color: #E8EDF2;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 2px;">Bekor qilish</button>
+            <button type="button" onClick="{{ closeModal }}" style="all: unset; cursor: pointer; background: #ff6b6b; color: #0B0F14; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; padding: 10px 18px; border-radius: 7px;" style-hover="background: #ff8585;" style-focus="outline: 2px solid #4FD1FF; outline-offset: 3px;">O'chirish</button>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;enableTyping&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Xulq&quot;},&quot;startLoggedIn&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Xulq&quot;}}">
+const CY = '#4FD1FF', DIM = '#8B99A6', TXT = '#E8EDF2';
+const STATUS = {
+  live: { status: 'Live', statusColor: '#39FF88', statusBg: 'rgba(57,255,136,0.10)' },
+  wip: { status: 'Ishlab chiqilmoqda', statusColor: '#FFB454', statusBg: 'rgba(255,180,84,0.10)' },
+  archive: { status: 'Arxiv', statusColor: '#8B99A6', statusBg: 'rgba(139,153,166,0.10)' }
+};
+const CATS = { manual: "Qo'lda qilingan", ai: 'AI bilan', startups: 'Startap' };
+
+const PROJECTS = [
+  { id: 'portsense', cat: 'manual', name: 'PortSense', desc: "Uy tarmog'i uchun port skaner va monitoring paneli.", cover: 'dashboard skrinshot', updated: '12-iyul 2026', s: 'live', tech: ['Node.js', 'Express', 'SQLite', 'Tailscale'], long: "Uy serverimda ochiq portlarni kuzatib turadigan kichik xizmat. Skanerlash navbati Node ichida, natijalar SQLite'da, panel esa oddiy server-render sahifa — ortiqcha frontend yo'q." },
+  { id: 'markflow', cat: 'manual', name: 'MarkFlow', desc: 'Markdown muharriri — klaviatura bilan boshqariladi.', cover: 'muharrir skrinshot', updated: '28-iyun 2026', s: 'live', tech: ['Next.js', 'Prisma', 'Postgres'], long: "Yozuvlarimni saqlash uchun o'zimga qilgan muharrir. Barcha amal klaviaturadan bajariladi, fayllar mahalliy saqlanadi va keyin sinxronlanadi." },
+  { id: 'dotkit', cat: 'manual', name: 'dotkit', desc: "Dotfayllarni bir buyruq bilan ko'chiruvchi CLI.", cover: 'terminal yozuvi', updated: '3-may 2026', s: 'archive', tech: ['Node.js', 'Bash'], long: "Yangi mashinada ish muhitini bir buyruqda tiklash uchun yozgan CLI. Endi ishlatmayman, lekin kodi ochiq qoldi." },
+  { id: 'geminotes', cat: 'ai', name: 'GemiNotes', desc: "Uzun matnni konspektga aylantiruvchi ilova.", cover: 'ilova ekrani', updated: '19-iyul 2026', s: 'live', tech: ['Next.js', 'Gemini API', 'Prisma'], long: "Maqola yoki transkriptni tashlaysiz — struktura bilan konspekt qaytaradi. Model chaqiruvlari navbat orqali, natija keshlanadi." },
+  { id: 'autodoc', cat: 'ai', name: 'AutoDoc', desc: 'Repozitoriy uchun hujjat qoralamasini yozadi.', cover: 'hujjat generatori', updated: '7-iyul 2026', s: 'wip', tech: ['Node.js', 'Gemini API', 'Express'], long: "Repodagi fayllarni o'qib, README va API hujjat qoralamasini tayyorlaydi. Hozir monorepo qo'llab-quvvatlashini qo'shmoqdaman." },
+  { id: 'promptlab', cat: 'ai', name: 'PromptLab', desc: "Promptlarni versiyalash va solishtirish paneli.", cover: 'taqqoslash paneli', updated: '22-iyun 2026', s: 'wip', tech: ['Next.js', 'SQLite'], long: "Bitta vazifa uchun bir necha prompt variantini yonma-yon sinab ko'rish uchun panel. Har bir versiya natijasi saqlanadi." },
+  { id: 'edutrack', cat: 'startups', name: 'EduTrack', desc: "O'quv markazlari uchun davomat va to'lov tizimi.", cover: 'mobil ilova', updated: '30-iyul 2026', s: 'live', tech: ['Next.js', 'Capacitor', 'Prisma', 'Express'], long: "O'quv markazlarida davomat, to'lov va ota-onaga xabar yuborishni bitta joyga yig'adigan tizim. Web va Android bitta kodbazadan chiqadi." },
+  { id: 'mahallapay', cat: 'startups', name: 'MahallaPay', desc: "Mahalliy xizmatlar uchun to'lov yig'ish vositasi.", cover: "to'lov oqimi", updated: '25-iyul 2026', s: 'wip', tech: ['Next.js', 'Express', 'Postgres'], long: "Kichik xizmat ko'rsatuvchilar uchun to'lov havolasi yaratish va hisobot olish. Hozir pilot rejimida ishlaydi." },
+  { id: 'statik', cat: 'startups', name: 'Statik', desc: 'Kichik biznes uchun sayt konstruktori.', cover: 'konstruktor ekrani', updated: '14-iyul 2026', s: 'wip', tech: ['Next.js', 'Prisma', 'SQLite'], long: "Bir sahifali biznes saytini 10 daqiqada chiqarish uchun konstruktor. Shablonlar cheklangan — atayin, tanlov ko'p bo'lsa ish tugamaydi." }
+];
+
+const LOG = {
+  default: [
+    { date: '30-iyul 2026', title: 'Offline navbat va konflikt yechimi', text: "Internet yo'q paytda yozilgan amallar navbatga tushadi, ulanish tiklanganda serverdagi versiya bilan solishtiriladi. Konflikt bo'lsa foydalanuvchiga tanlov beriladi." },
+    { date: '18-iyul 2026', title: 'Prisma sxemasini ikkinchi marta qayta yozdim', text: "Birinchi sxema hisobotlarga mos kelmadi. Tranzaksiyalarni alohida jadvalga chiqarib, hisobot so'rovlarini soddalashtirdim." },
+    { date: '2-iyul 2026', title: 'Capacitor build quvuri', text: "Bitta buyruq bilan web build va Android APK chiqadigan qilib sozladim. Sinov qurilmasiga o'rnatish ham shu skript ichida." }
+  ]
+};
+
+PROJECTS.forEach((p, i) => Object.assign(p, STATUS[p.s], { categoryLabel: CATS[p.cat], log: LOG[p.id] || LOG.default }));
+
+const POSTS = [
+  { title: 'Offline navbat va konflikt yechimi', project: 'EduTrack', date: '30-iyul 2026', pid: 'edutrack' },
+  { title: 'Gemini javoblarini keshlash', project: 'GemiNotes', date: '19-iyul 2026', pid: 'geminotes' },
+  { title: "To'lov havolasi oqimini qisqartirdim", project: 'MahallaPay', date: '25-iyul 2026', pid: 'mahallapay' },
+  { title: 'Monorepo uchun hujjat generatori', project: 'AutoDoc', date: '7-iyul 2026', pid: 'autodoc' }
+];
+
+const VIDEOS = [
+  { title: 'Next.js + Capacitor: bitta kodbaza, ikkita platforma', date: '28-iyul 2026', views: '14K ko\'rish', thumb: 'video thumbnail', url: 'youtube.com/watch?v=a1b2c3' },
+  { title: "Prisma migratsiyalari: xatolarim va yechimlarim", date: '14-iyul 2026', views: '8.2K ko\'rish', thumb: 'video thumbnail', url: 'youtube.com/watch?v=d4e5f6' },
+  { title: 'Uy serverini Tailscale bilan ochmasdan ulash', date: '2-iyul 2026', views: '22K ko\'rish', thumb: 'video thumbnail', url: 'youtube.com/watch?v=g7h8i9' },
+  { title: 'Gemini API bilan real ish oqimi', date: '20-iyun 2026', views: '11K ko\'rish', thumb: 'video thumbnail', url: 'youtube.com/watch?v=j1k2l3' },
+  { title: "Express'da navbat: oddiy va ishlaydigan usul", date: '6-iyun 2026', views: '6.4K ko\'rish', thumb: 'video thumbnail', url: 'youtube.com/watch?v=m4n5o6' },
+  { title: 'Startapni ochiq olib borish — 6 oylik natija', date: '24-may 2026', views: '31K ko\'rish', thumb: 'video thumbnail', url: 'youtube.com/watch?v=p7q8r9' }
+];
+
+class Component extends DCLogic {
+  state = {
+    page: 'home', tab: 'manual', activeId: 'edutrack', modal: null,
+    typed: 0, adminIn: false, adminSection: 'projects',
+    name: null, nameDraft: '', draft: '', playing: VIDEOS[0].title,
+    comments: [
+      { name: 'Aziz', date: '31-iyul 2026', text: "Offline navbat qismi juda foydali bo'ldi, o'zimda ham shunga o'xshash muammo bor edi." },
+      { name: 'Nodira', date: '30-iyul 2026', text: 'Konflikt oynasini skrinshot bilan ko\'rsatsang yana yaxshi bo\'lardi.' }
+    ]
+  };
+
+  componentDidMount() {
+    if (this.props.enableTyping === false) { this.setState({ typed: 999 }); return; }
+    this.timer = setInterval(() => {
+      this.setState(s => {
+        if (s.typed >= 60) { clearInterval(this.timer); return null; }
+        return { typed: s.typed + 1 };
+      });
+    }, 26);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+
+  go = page => () => this.setState({ page, modal: null });
+  open = id => () => this.setState({ page: 'detail', activeId: id, modal: null });
+
+  renderVals() {
+    const s = this.state;
+    const page = s.page;
+    const pathFor = {
+      home: '~', about: '~/about', projects: '~/projects', detail: '~/projects/' + s.activeId,
+      docs: '~/docs', youtube: '~/youtube', admin: '~/admin'
+    };
+    const cmdFor = {
+      home: 'whoami', about: 'cat about.md', projects: 'ls -la',
+      detail: 'git log --oneline', docs: 'ls *.pdf', youtube: 'ls videos/', admin: 'sudo su'
+    };
+    const fullPrompt = 'whitehacker@portfolio:' + (pathFor[page] || '~') + '$ ';
+    const cmd = cmdFor[page] || '';
+    const total = fullPrompt.length + cmd.length;
+    const shown = s.typed >= total ? total : s.typed;
+    const active = PROJECTS.find(p => p.id === s.activeId) || PROJECTS[0];
+
+    const navDef = [
+      { label: '~/home', page: 'home', branch: '├─' },
+      { label: '~/about', page: 'about', branch: '├─' },
+      { label: '~/projects', page: 'projects', branch: '├─' },
+      { label: 'manual/', page: 'projects', tab: 'manual', branch: '│', indent: '14px' },
+      { label: 'ai/', page: 'projects', tab: 'ai', branch: '│', indent: '14px' },
+      { label: 'startups/', page: 'projects', tab: 'startups', branch: '│', indent: '14px' },
+      { label: '~/docs', page: 'docs', branch: '├─' },
+      { label: '~/youtube', page: 'youtube', branch: '└─' }
+    ];
+    const nav = navDef.map(n => {
+      const on = n.tab ? (page === 'projects' && s.tab === n.tab) : (n.page === page && !n.tab && (page !== 'projects' || n.page === 'projects'));
+      const activeItem = n.tab ? (page === 'projects' && s.tab === n.tab) : (page === n.page && !n.tab);
+      return {
+        label: n.label, branch: n.branch, indent: n.indent || '0px',
+        color: activeItem ? TXT : DIM,
+        bg: activeItem ? '#1B2530' : 'transparent',
+        edge: activeItem ? CY : 'transparent',
+        onClick: () => this.setState({ page: n.page, tab: n.tab || s.tab, modal: null })
+      };
+    });
+
+    const tabs = [['manual', "Qo'lda qilingan"], ['ai', 'AI bilan'], ['startups', 'Startaplar']].map(([id, label]) => ({
+      label, color: s.tab === id ? CY : DIM, edge: s.tab === id ? CY : 'transparent',
+      onClick: () => this.setState({ tab: id })
+    }));
+
+    const adminSections = [['projects', 'Loyihalar'], ['blogs', 'Bloglar'], ['docs', 'Hujjatlar'], ['youtube', 'YouTube'], ['comments', 'Izohlar'], ['settings', 'Sozlamalar']];
+    const primary = {
+      projects: ['+ Yangi loyiha', () => this.setState({ modal: 'newProject' })],
+      blogs: ['+ Yangi yozuv', () => this.setState({ modal: 'newPost' })],
+      youtube: ['+ Video link', () => this.setState({ modal: 'videoAdd' })],
+      docs: ['+ Hujjat yuklash', () => {}],
+      comments: ['Moderatsiya', () => {}],
+      settings: ['Saqlash', () => {}]
+    }[s.adminSection];
+
+    return {
+      promptPath: fullPrompt.slice(0, shown),
+      promptCmd: shown > fullPrompt.length ? cmd.slice(0, shown - fullPrompt.length) : '',
+      nav, tabs, active,
+      isHome: page === 'home', isAbout: page === 'about', isProjects: page === 'projects',
+      isDetail: page === 'detail', isDocs: page === 'docs', isYoutube: page === 'youtube',
+      isAdminPanel: page === 'admin' && (s.adminIn || this.props.startLoggedIn === true),
+      isStartupTab: s.tab === 'startups',
+      visibleProjects: PROJECTS.filter(p => p.cat === s.tab).map(p => Object.assign({}, p, { open: this.open(p.id) })),
+      allProjects: PROJECTS,
+      recentPosts: POSTS.slice(0, 3).map(p => Object.assign({}, p, { open: this.open(p.pid) })),
+      allPosts: POSTS,
+      stats: [
+        { value: '12', label: 'LOYIHA' }, { value: '3', label: 'STARTAP' },
+        { value: '48', label: 'BLOG-YOZUV' }, { value: '26', label: 'VIDEO' }
+      ],
+      stack: [
+        { name: 'FRONTEND', items: ['Next.js', 'React', 'Tailwind', 'TypeScript'] },
+        { name: 'BACKEND', items: ['Node.js', 'Express', 'Prisma', 'SQLite', 'Postgres'] },
+        { name: 'MOBILE', items: ['Capacitor', 'Android build'] },
+        { name: 'AI / API', items: ['Gemini API', 'Embeddings', 'Prompt tooling'] },
+        { name: 'NETWORKING', items: ['Tailscale', 'Nginx', 'Uy serveri'] }
+      ],
+      timeline: [
+        { year: '2026', title: 'EduTrack pilotda', text: "Uchta o'quv markazida real foydalanuvchilar bilan ishlayapti." },
+        { year: '2025', title: 'Mobil tomonga o\'tish', text: 'Capacitor bilan bitta kodbazadan web va Android chiqarishni o\'zlashtirdim.' },
+        { year: '2024', title: 'AI ish oqimimga kirdi', text: 'Prototip va hujjatlashtirishni tezlashtirish uchun model chaqiruvlarini quvurga qo\'shdim.' },
+        { year: '2022', title: 'Birinchi to\'liq stack loyiha', text: 'Node.js va Postgres bilan birinchi ishlab turgan mahsulotni chiqardim.' }
+      ],
+      docs: [
+        { name: 'WhiteHacker — CV (2026).pdf', meta: 'PDF · 240 KB · yangilangan 20-iyul 2026' },
+        { name: 'Rezyume — qisqa versiya.pdf', meta: 'PDF · 120 KB · yangilangan 20-iyul 2026' },
+        { name: 'Loyihalar portfoliosi.pdf', meta: 'PDF · 3.1 MB · yangilangan 12-iyun 2026' }
+      ],
+      videos: VIDEOS.map(v => Object.assign({}, v, { open: () => this.setState({ modal: 'videoPlay', playing: v.title }) })),
+      comments: s.comments,
+      noComments: s.comments.length === 0,
+      commenterLine: s.name ? 'siz: ' + s.name : 'izoh yozish uchun ismingizni kiritasiz',
+      playingTitle: s.playing,
+      adminNav: adminSections.map(([id, label]) => ({
+        label, color: s.adminSection === id ? TXT : DIM,
+        bg: s.adminSection === id ? '#1B2530' : 'transparent',
+        onClick: () => this.setState({ adminSection: id })
+      })),
+      adminTitle: (adminSections.find(a => a[0] === s.adminSection) || [])[1],
+      adminPrimaryLabel: primary[0],
+      adminPrimaryAction: primary[1],
+      adminIsProjects: s.adminSection === 'projects',
+      adminIsBlogs: s.adminSection === 'blogs',
+      adminIsComments: s.adminSection === 'comments',
+      adminIsYoutube: s.adminSection === 'youtube',
+      adminIsOther: s.adminSection === 'docs' || s.adminSection === 'settings',
+      adminEmptyText: s.adminSection === 'docs' ? 'hujjatlarni bu yerga tashlang' : 'kanal linklari, Telegram token, sayt sarlavhasi',
+      moderationComments: s.comments.map(c => Object.assign({}, c, { on: 'EduTrack' })),
+      overlayOpen: !!s.modal,
+      modalLogin: s.modal === 'login', modalNewProject: s.modal === 'newProject',
+      modalNewPost: s.modal === 'newPost', modalTelegram: s.modal === 'telegram',
+      modalVideoAdd: s.modal === 'videoAdd', modalName: s.modal === 'name',
+      modalVideoPlay: s.modal === 'videoPlay', modalDelete: s.modal === 'delete',
+      goProjects: this.go('projects'), goDocs: this.go('docs'), goYoutube: this.go('youtube'),
+      openAdmin: () => this.setState(st => (st.adminIn || this.props.startLoggedIn === true) ? { page: 'admin' } : { page: 'admin', modal: 'login' }),
+      login: () => this.setState({ adminIn: true, modal: null }),
+      logout: () => this.setState({ adminIn: false, page: 'home', modal: null }),
+      closeModal: () => this.setState({ modal: null }),
+      openNewProject: () => this.setState({ modal: 'newProject' }),
+      openTelegram: () => this.setState({ modal: 'telegram' }),
+      openDelete: () => this.setState({ modal: 'delete' }),
+      openNameModal: () => this.setState({ modal: 'name' }),
+      onNameInput: e => this.setState({ nameDraft: e.target.value }),
+      saveName: () => this.setState(st => ({ name: st.nameDraft || 'Mehmon', modal: null })),
+      onDraft: e => this.setState({ draft: e.target.value }),
+      submitComment: () => this.setState(st => {
+        if (!st.name) return { modal: 'name' };
+        if (!st.draft.trim()) return null;
+        return { comments: [{ name: st.name, date: 'hozir', text: st.draft }].concat(st.comments), draft: '' };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

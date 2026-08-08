@@ -1,0 +1,110 @@
+node_modules/
+.env
+.env.local
+
+# Prisma / SQLite
+server/prisma/*.db
+server/prisma/*.db-journal
+
+# Builds
+server/dist/
+web/.next/
+web/out/
+web/next-env.d.ts
+*.tsbuildinfo
+
+# Uploads
+web/public/uploads/*
+!web/public/uploads/.gitkeep
+
+.DS_Store
+*.log
+# --- Sirlar va muhit ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.keystore
+*.jks
+secrets/
+credentials.json
+service-account*.json
+
+# --- Ma'lumotlar bazasi (real foydalanuvchi ma'lumoti) ---
+*.db
+*.db-shm
+*.db-wal
+*.db.bak*
+*.sqlite
+*.sqlite3
+media/
+uploads/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.venv-*/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+
+# --- Node / JS ---
+node_modules/
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+.vite/
+
+# --- Flutter / Dart ---
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+android/local.properties
+android/.gradle/
+ios/Pods/
+macos/Pods/
+ios/Flutter/Flutter.podspec
+
+# --- Mobil / desktop build natijalari ---
+*.apk
+*.aab
+*.ipa
+*.dmg
+*.exe
+*.msi
+*.deb
+*.AppImage
+*.app.zip
+local-builds/
+downloads/
+release/
+Release/
+
+# --- Docker / deploy ---
+*.tar
+*.tar.gz
+
+# --- OS / IDE ---
+.DS_Store
+.idea/
+.vscode/
+*.iml
+Thumbs.db
+
+# --- Loglar va vaqtinchalik ---
+*.log
+logs/
+temp/
+tmp/
+.cache/
+
+# --- Claude Code ---
+.claude/
