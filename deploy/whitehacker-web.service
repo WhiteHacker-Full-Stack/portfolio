@@ -1,0 +1,28 @@
+[Unit]
+Description=WhiteHacker portfolio — Next.js frontend
+After=network-online.target whitehacker-api.service
+Wants=whitehacker-api.service
+
+[Service]
+Type=simple
+User=whportfolio
+Group=whportfolio
+WorkingDirectory=/var/www/whitehacker-portfolio/web
+ExecStart=/var/www/whitehacker-portfolio/node_modules/.bin/next start -p 3000
+Restart=always
+RestartSec=5
+Environment=NODE_ENV=production
+Environment=API_INTERNAL_URL=http://127.0.0.1:4000
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/whitehacker-portfolio/web/.next
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=whitehacker-web
+
+[Install]
+WantedBy=multi-user.target

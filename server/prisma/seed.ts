@@ -198,12 +198,9 @@ const VIDEOS = [
   { title: 'Startapni ochiq olib borish — 6 oylik natija', url: 'https://www.youtube.com/watch?v=fJ9rUzIMcZQ' },
 ];
 
-// "Loyihalar portfoliosi" bu ro'yxatda yo'q — uni API loyihalardan avtomatik yasaydi
-// (server/src/lib/portfolioPdf.ts).
-const DOCUMENTS = [
-  { title: 'WhiteHacker — CV (2026).pdf', type: 'PDF' },
-  { title: 'Rezyume — qisqa versiya.pdf', type: 'PDF' },
-];
+// Hujjatlar seed qilinmaydi: CV kabi fayllar admin paneldan yuklanadi, "Loyihalar
+// portfoliosi" esa loyihalardan avtomatik yasaladi (server/src/lib/portfolioPdf.ts).
+const DOCUMENTS: { title: string; type: string }[] = [];
 
 function daysAgo(n: number): Date {
   return new Date(Date.now() - n * 24 * 60 * 60 * 1000);

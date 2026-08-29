@@ -12,7 +12,9 @@
     "build": "npm run build -w server && npm run build -w web",
     "db:migrate": "prisma migrate dev --schema=server/prisma/schema.prisma",
     "db:generate": "prisma generate --schema=server/prisma/schema.prisma",
+    "db:deploy": "prisma migrate deploy --schema=server/prisma/schema.prisma",
     "db:seed": "tsx server/prisma/seed.ts",
+    "db:admin": "tsx server/prisma/createAdmin.ts",
     "db:studio": "prisma studio --schema=server/prisma/schema.prisma"
   },
   "devDependencies": {

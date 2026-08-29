@@ -10,6 +10,8 @@ config({ path: path.join(REPO_ROOT, '.env') });
 
 export const env = {
   port: Number(process.env.PORT ?? 4000),
+  // Behind nginx the API must not be reachable from the outside directly.
+  host: process.env.HOST ?? '127.0.0.1',
   jwtSecret: process.env.JWT_SECRET ?? '',
   siteUrl: (process.env.SITE_URL ?? 'http://localhost:3000').replace(/\/$/, ''),
   corsOrigins: (process.env.CORS_ORIGINS ?? '')

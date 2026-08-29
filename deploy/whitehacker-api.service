@@ -1,0 +1,28 @@
+[Unit]
+Description=WhiteHacker portfolio — Express/Prisma API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=whportfolio
+Group=whportfolio
+WorkingDirectory=/var/www/whitehacker-portfolio/server
+ExecStart=/usr/bin/node dist/index.js
+Restart=always
+RestartSec=5
+Environment=NODE_ENV=production
+
+# Xavfsizlik cheklovlari
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/whitehacker-portfolio/server/prisma /var/www/whitehacker-portfolio/web/public/uploads
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=whitehacker-api
+
+[Install]
+WantedBy=multi-user.target

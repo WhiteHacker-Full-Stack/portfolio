@@ -31,6 +31,6 @@ app.use('/api', publicRouter);
 
 app.use(errorHandler);
 
-app.listen(env.port, () => {
-  console.log(`API http://localhost:${env.port}`);
+app.listen(env.port, env.host, () => {
+  console.log(`API http://${env.host}:${env.port}`);
 });
