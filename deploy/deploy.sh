@@ -19,6 +19,9 @@ git log --oneline -1
 log "Paketlar"
 npm ci --no-audit --no-fund
 
+# uploads .gitignore da — reset --hard uni o'chirmaydi, lekin yangi klonda yo'q.
+mkdir -p web/public/uploads
+
 log "Prisma"
 npm run db:generate
 npm run db:deploy

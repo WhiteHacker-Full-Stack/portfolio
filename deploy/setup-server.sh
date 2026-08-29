@@ -69,6 +69,10 @@ fi
 chown -R "$APP_USER:$APP_USER" "$APP_DIR"
 sudo -u "$APP_USER" git -C "$APP_DIR" log --oneline -1
 
+# uploads .gitignore da — klonlashda yaratilmaydi, systemd esa ReadWritePaths
+# uchun uning mavjudligini talab qiladi.
+install -d -o "$APP_USER" -g "$APP_USER" "$APP_DIR/web/public/uploads"
+
 log ".env"
 ENV_FILE="$APP_DIR/.env"
 if [ ! -f "$ENV_FILE" ]; then
