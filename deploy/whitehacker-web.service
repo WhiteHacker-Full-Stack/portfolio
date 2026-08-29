@@ -8,7 +8,8 @@ Type=simple
 User=whportfolio
 Group=whportfolio
 WorkingDirectory=/var/www/whitehacker-portfolio/web
-ExecStart=/var/www/whitehacker-portfolio/node_modules/.bin/next start -p 3000
+# -H 127.0.0.1: faqat nginx orqali ochilsin, tashqaridan to'g'ridan-to'g'ri emas.
+ExecStart=/var/www/whitehacker-portfolio/node_modules/.bin/next start -H 127.0.0.1 -p 3000
 Restart=always
 RestartSec=5
 Environment=NODE_ENV=production
