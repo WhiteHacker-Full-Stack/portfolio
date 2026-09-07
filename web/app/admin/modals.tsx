@@ -86,6 +86,7 @@ export type ProjectDraft = {
   status: string;
   description: string;
   tech: string;
+  repoUrl: string;
   cover: File | null;
 };
 
@@ -103,13 +104,14 @@ export function ProjectModal({
   const [status, setStatus] = useState(project?.status ?? 'LIVE');
   const [description, setDescription] = useState(project?.description ?? '');
   const [tech, setTech] = useState(project?.tech.join(', ') ?? '');
+  const [repoUrl, setRepoUrl] = useState(project?.repoUrl ?? '');
   const [cover, setCover] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   async function save() {
     setBusy(true);
-    setError(await onSave({ title, category, status, description, tech, cover }));
+    setError(await onSave({ title, category, status, description, tech, repoUrl, cover }));
     setBusy(false);
   }
 
@@ -152,6 +154,13 @@ export function ProjectModal({
           onChange={(e) => setTech(e.target.value)}
           className="f1"
           style={s(INPUT)}
+        />
+        <input
+          placeholder="GitHub havolasi (ixtiyoriy)"
+          value={repoUrl}
+          onChange={(e) => setRepoUrl(e.target.value)}
+          className="f1"
+          style={s(`${INPUT} font-family: 'IBM Plex Mono', monospace;`)}
         />
         <label style={s("border: 1px dashed #26323D; border-radius: 8px; padding: 22px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6; cursor: pointer; display: block;")}>
           {cover ? cover.name : 'cover rasmni bu yerga tashlang — 1200×630'}

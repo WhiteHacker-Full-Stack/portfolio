@@ -10,6 +10,7 @@ export function serializeProject(project: Project) {
     status: project.status,
     description: project.description,
     tech: project.tech.split(',').map((t) => t.trim()).filter(Boolean),
+    repoUrl: project.repoUrl,
     coverImage: project.coverImage,
     createdAt: project.createdAt.toISOString(),
     updatedAt: project.updatedAt.toISOString(),

@@ -17,6 +17,8 @@ model Project {
   description String
   /// Comma-separated tech chips shown on the project page. Exposed as an array by the API.
   tech        String     @default("")
+  /// Public repository link shown as a button on the project page.
+  repoUrl     String?
   coverImage  String?
   status      String     @default("IN_PROGRESS")
   createdAt   DateTime   @default(now())

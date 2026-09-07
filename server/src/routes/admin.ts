@@ -65,6 +65,7 @@ const projectSchema = z.object({
   status: statusSchema.default('IN_PROGRESS'),
   description: z.string().trim().min(1).max(5000),
   tech: z.string().trim().max(300).optional(),
+  repoUrl: z.union([z.string().trim().url(), z.literal('')]).optional(),
 });
 
 adminRouter.get(
@@ -90,6 +91,7 @@ adminRouter.post(
       data: {
         ...parsed.data,
         tech: parsed.data.tech ?? '',
+        repoUrl: parsed.data.repoUrl || null,
         slug: await uniqueSlug(parsed.data.title),
         coverImage: cover?.url ?? null,
       },
@@ -119,6 +121,7 @@ adminRouter.put(
       data: {
         ...parsed.data,
         tech: parsed.data.tech ?? '',
+        repoUrl: parsed.data.repoUrl || null,
         slug:
           parsed.data.title === existing.title
             ? existing.slug

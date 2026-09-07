@@ -128,6 +128,7 @@ export default function AdminPage() {
     body.set('status', draft.status);
     body.set('description', draft.description);
     body.set('tech', draft.tech.split(',').map((t) => t.trim()).filter(Boolean).join(','));
+    body.set('repoUrl', draft.repoUrl.trim());
     if (draft.cover) body.set('cover', draft.cover);
 
     const result = await run(() =>

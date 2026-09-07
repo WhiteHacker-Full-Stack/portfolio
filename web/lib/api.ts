@@ -8,6 +8,7 @@ export type Project = {
   status: string;
   description: string;
   tech: string[];
+  repoUrl: string | null;
   coverImage: string | null;
   createdAt: string;
   updatedAt: string;

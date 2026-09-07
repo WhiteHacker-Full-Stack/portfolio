@@ -48,6 +48,17 @@ export default async function ProjectDetailPage({
         <p style={s('margin: 0; max-width: 680px; font-size: 15px; line-height: 1.75; color: #8B99A6; text-wrap: pretty;')}>
           {project.description}
         </p>
+        {project.repoUrl && (
+          <a
+            href={project.repoUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="h-cyan f2"
+            style={s("cursor: pointer; align-self: flex-start; font-family: 'IBM Plex Mono', monospace; font-size: 12px; border: 1px solid #26323D; padding: 8px 14px; border-radius: 7px; color: #E8EDF2;")}
+          >
+            Kodni ko&apos;rish — GitHub →
+          </a>
+        )}
       </div>
 
       <div style={s('display: flex; flex-direction: column; gap: 20px;')}>
