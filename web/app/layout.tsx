@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   },
   // Google Search Console egalikni shu teg orqali tasdiqlaydi (DNS TXT o'rniga).
   verification: {
-    google: '5Mwyth5ZTOn3u3TpXwykXn_ZOOexgyGFKXRnnZYqGUI',
+    google: 'qjMT7E6zxNp3O3GLWgOSOBjX1f9wMWCpS-lvkD1lJ14',
   },
 };
 
