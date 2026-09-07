@@ -16,7 +16,7 @@ import {
   type ProjectDraft,
 } from './modals';
 
-type Section = 'projects' | 'blogs' | 'docs' | 'youtube' | 'comments' | 'backup' | 'settings';
+type Section = 'projects' | 'blogs' | 'docs' | 'youtube' | 'comments' | 'users' | 'backup' | 'settings';
 
 const SECTIONS: { id: Section; label: string; primary: string }[] = [
   { id: 'projects', label: 'Loyihalar', primary: '+ Yangi loyiha' },
@@ -24,6 +24,7 @@ const SECTIONS: { id: Section; label: string; primary: string }[] = [
   { id: 'docs', label: 'Hujjatlar', primary: '+ Hujjat yuklash' },
   { id: 'youtube', label: 'YouTube', primary: '+ Video link' },
   { id: 'comments', label: 'Izohlar', primary: 'Yangilash' },
+  { id: 'users', label: 'Foydalanuvchi', primary: 'Yangilash' },
   { id: 'backup', label: 'Zaxira', primary: 'Hozir yuborish' },
   { id: 'settings', label: 'Sozlamalar', primary: 'Sozlamalar' },
 ];
@@ -34,6 +35,14 @@ const LINK_BTN = "all: unset; cursor: pointer; font-family: 'IBM Plex Mono', mon
 const DEL_BTN = "all: unset; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8B99A6;";
 
 type Deletion = { label: string; path: string };
+
+type SiteUser = {
+  id: string;
+  name: string;
+  username: string;
+  createdAt: string;
+  lastLoginAt: string | null;
+};
 
 type BackupInfo = {
   enabled: boolean;
@@ -55,6 +64,7 @@ export default function AdminPage() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
   const [backup, setBackup] = useState<BackupInfo | null>(null);
+  const [users, setUsers] = useState<SiteUser[]>([]);
 
   const [projectModal, setProjectModal] = useState<{ project: Project | null } | null>(null);
   const [postModal, setPostModal] = useState(false);
@@ -66,13 +76,14 @@ export default function AdminPage() {
 
   const load = useCallback(async () => {
     try {
-      const [p, b, d, v, c, bk] = await Promise.all([
+      const [p, b, d, v, c, bk, us] = await Promise.all([
         adminFetch<Project[]>('/projects'),
         adminFetch<Post[]>('/posts'),
         fetch('/api/documents').then((r) => r.json() as Promise<Doc[]>),
         fetch('/api/youtube').then((r) => r.json() as Promise<Video[]>),
         adminFetch<Comment[]>('/comments'),
         adminFetch<BackupInfo>('/backup'),
+        adminFetch<SiteUser[]>('/users'),
       ]);
       setProjects(p);
       setPosts(b);
@@ -80,6 +91,7 @@ export default function AdminPage() {
       setVideos(v);
       setComments(c);
       setBackup(bk);
+      setUsers(us);
       setError(null);
     } catch (err) {
       if (err instanceof Unauthorized) {
@@ -452,6 +464,36 @@ export default function AdminPage() {
                 )}
               </div>
             ))}
+          </div>
+        )}
+
+        {section === 'users' && (
+          <div style={s('display: flex; flex-direction: column; gap: 12px;')}>
+            {users.length === 0 ? (
+              <div style={s("border: 1px dashed #26323D; border-radius: 10px; padding: 40px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8B99A6;")}>
+                Hali hech kim ro&apos;yxatdan o&apos;tmagan.
+              </div>
+            ) : (
+              users.map((u) => (
+                <div key={u.id} style={s(`${CARD} padding: 14px 18px; display: flex; align-items: center; gap: 16px;`)}>
+                  <span style={s('flex: 1; display: flex; flex-direction: column; gap: 5px;')}>
+                    <span style={s('font-size: 14px; font-weight: 600;')}>{u.name}</span>
+                    <span style={s("font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6;")}>
+                      @{u.username} \u00b7 qo&apos;shilgan {uzDate(u.createdAt)}
+                      {u.lastLoginAt ? ` \u00b7 oxirgi kirish ${uzDate(u.lastLoginAt)}` : ''}
+                    </span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setDeletion({ label: u.name, path: `/users/${u.id}` })}
+                    className="h-danger f2"
+                    style={s(DEL_BTN)}
+                  >
+                    O&apos;chirish
+                  </button>
+                </div>
+              ))
+            )}
           </div>
         )}
 

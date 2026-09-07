@@ -1,6 +1,16 @@
+import type { Metadata } from 'next';
 import { apiGet, type Doc } from '@/lib/api';
 import { s } from '@/lib/css';
 import { fileSize, uzDate } from '@/lib/format';
+import { DocActions } from './DocActions';
+
+export const metadata: Metadata = {
+  title: 'Hujjatlar',
+  description:
+    "CV va loyihalar portfoliosi — yuklab olish uchun. Portfolio PDF saytdagi loyihalar " +
+    "ma'lumotidan avtomatik yasaladi, shuning uchun har doim eng so'nggi holatda bo'ladi.",
+  alternates: { canonical: '/docs' },
+};
 
 export default async function DocsPage() {
   const documents = await apiGet<Doc[]>('/documents');
@@ -32,25 +42,7 @@ export default async function DocsPage() {
                   : `${doc.type} · ${fileSize(doc.sizeBytes)} · yangilangan ${uzDate(doc.updatedAt)}`}
               </span>
             </span>
-            <span style={s('display: flex; gap: 10px;')}>
-              <a
-                href={doc.fileUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="h-cyan f2"
-                style={s("cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 12px; border: 1px solid #26323D; padding: 8px 14px; border-radius: 7px; color: #E8EDF2;")}
-              >
-                Ko&apos;rish
-              </a>
-              <a
-                href={doc.fileUrl}
-                download
-                className="h-white f2"
-                style={s("cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: #F5F7FA; color: #0B0F14; padding: 8px 14px; border-radius: 7px;")}
-              >
-                Yuklab olish
-              </a>
-            </span>
+            <DocActions fileUrl={doc.fileUrl} />
           </div>
         ))}
       </div>

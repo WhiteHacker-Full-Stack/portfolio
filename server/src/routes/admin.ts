@@ -483,6 +483,34 @@ adminRouter.delete(
   }),
 );
 
+// --- Saytga ro'yxatdan o'tgan foydalanuvchilar ---
+
+adminRouter.get(
+  '/users',
+  ah(async (_req, res) => {
+    const users = await prisma.siteUser.findMany({ orderBy: { createdAt: 'desc' } });
+    res.json(
+      users.map((u) => ({
+        id: u.id,
+        name: u.name,
+        username: u.username,
+        createdAt: u.createdAt.toISOString(),
+        lastLoginAt: u.lastLoginAt?.toISOString() ?? null,
+      })),
+    );
+  }),
+);
+
+adminRouter.delete(
+  '/users/:id',
+  ah(async (req, res) => {
+    const user = await prisma.siteUser.findUnique({ where: { id: req.params.id } });
+    if (!user) return res.status(404).json({ error: 'Foydalanuvchi topilmadi' });
+    await prisma.siteUser.delete({ where: { id: user.id } });
+    res.json({ ok: true });
+  }),
+);
+
 // --- Comment moderation ---
 
 adminRouter.get(

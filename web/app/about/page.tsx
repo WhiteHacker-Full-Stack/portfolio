@@ -1,4 +1,12 @@
+import type { Metadata } from 'next';
 import { s } from '@/lib/css';
+import { DEFAULT_DESCRIPTION, PERSON } from '@/lib/seo';
+
+export const metadata: Metadata = {
+  title: 'Men haqimda',
+  description: `${PERSON.name} (${PERSON.brand}) — dasturchilik yo'lim, o'rgangan texnologiyalarim va dars berish tajribam. ${DEFAULT_DESCRIPTION.slice(0, 80)}`,
+  alternates: { canonical: '/about' },
+};
 
 // Faqat kursda o'rganilgan va mustaqil yoziladigan texnologiyalar.
 // Qolgan hamma narsa AI bilan ishlanadi — bu ikkinchi paragrafda ochiq aytilgan.

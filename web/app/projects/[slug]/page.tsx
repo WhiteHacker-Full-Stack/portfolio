@@ -1,9 +1,39 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { apiGet, apiGetOrNull, type Comment, type ProjectDetail } from '@/lib/api';
 import { s } from '@/lib/css';
 import { STATUS_COLOR, STATUS_LABEL, uzDate } from '@/lib/format';
+import { PERSON, jsonLdScript, projectJsonLd } from '@/lib/seo';
 import { Comments } from './Comments';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const project = await apiGetOrNull<ProjectDetail>(`/projects/${slug}`);
+  if (!project) return { title: 'Loyiha topilmadi' };
+
+  const description = project.description.slice(0, 300);
+  return {
+    title: project.title,
+    description,
+    keywords: [project.title, ...project.tech, PERSON.brand, PERSON.name],
+    alternates: { canonical: `/projects/${slug}` },
+    openGraph: {
+      type: 'article',
+      title: `${project.title} · ${PERSON.brand}`,
+      description,
+      url: `/projects/${slug}`,
+      publishedTime: project.createdAt,
+      modifiedTime: project.updatedAt,
+      authors: [PERSON.name],
+      ...(project.coverImage ? { images: [project.coverImage] } : {}),
+    },
+  };
+}
 
 export default async function ProjectDetailPage({
   params,
@@ -19,6 +49,7 @@ export default async function ProjectDetailPage({
 
   return (
     <section style={s('display: flex; flex-direction: column; gap: 36px;')}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdScript(projectJsonLd(project))} />
       <div style={s('display: flex; flex-direction: column; gap: 16px;')}>
         <Link
           href="/projects"

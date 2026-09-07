@@ -1,6 +1,15 @@
+import type { Metadata } from 'next';
 import { apiGet, type Video } from '@/lib/api';
 import { s } from '@/lib/css';
 import { VideoGrid } from './VideoGrid';
+
+export const metadata: Metadata = {
+  title: 'YouTube',
+  description:
+    'Dasturlash bo\'yicha videolarim — stack, debug va real loyiha ustidagi ish. ' +
+    '@WhiteHacker-studio kanalidan.',
+  alternates: { canonical: '/youtube' },
+};
 
 export default async function YoutubePage() {
   const videos = await apiGet<Video[]>('/youtube');

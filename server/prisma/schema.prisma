@@ -79,6 +79,17 @@ model AdminUser {
   passwordHash String
 }
 
+/// Saytga ro'yxatdan o'tgan oddiy foydalanuvchi. Admin emas —
+/// keyinchalik yuklab olish va shunga o'xshash imkoniyatlar shu hisobga bog'lanadi.
+model SiteUser {
+  id           String    @id @default(cuid())
+  username     String    @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime  @default(now())
+  lastLoginAt  DateTime?
+}
+
 /// Telegram orqali zaxira nusxa oladigan, login/parol bilan tasdiqlangan suhbatlar.
 model BackupSubscriber {
   id         String    @id @default(cuid())

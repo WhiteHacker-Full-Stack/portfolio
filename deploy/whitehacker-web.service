@@ -14,6 +14,8 @@ Restart=always
 RestartSec=5
 Environment=NODE_ENV=production
 Environment=API_INTERNAL_URL=http://127.0.0.1:4000
+# SEO: canonical havolalar, sitemap va JSON-LD shu manzildan yasaladi.
+Environment=SITE_URL=https://whitehacker-portfolio.duckdns.org
 
 NoNewPrivileges=true
 PrivateTmp=true

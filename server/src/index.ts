@@ -5,6 +5,7 @@ import { startBackupScheduler } from './lib/backup.js';
 import { startBackupBot } from './lib/backupBot.js';
 import { errorHandler } from './lib/http.js';
 import { adminRouter } from './routes/admin.js';
+import { authRouter } from './routes/auth.js';
 import { publicRouter } from './routes/public.js';
 
 const app = express();
@@ -29,6 +30,7 @@ app.use('/uploads', express.static(env.uploadDir));
 
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 app.use('/api/admin', adminRouter);
+app.use('/api/auth', authRouter);
 app.use('/api', publicRouter);
 
 app.use(errorHandler);

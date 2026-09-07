@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
+import { AuthPanel } from '@/components/AuthPanel';
 import { s } from '@/lib/css';
 
 const CY = '#4FD1FF';
@@ -128,13 +129,7 @@ function Sidebar() {
             YT
           </a>
         </div>
-        <Link
-          href="/admin"
-          className="h-dim f2"
-          style={s("cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #4a5764; letter-spacing: 0.06em;")}
-        >
-          ~/admin
-        </Link>
+        <AuthPanel />
       </div>
     </aside>
   );

@@ -1,7 +1,16 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { apiGet, type Project } from '@/lib/api';
 import { s } from '@/lib/css';
 import { STATUS_COLOR, STATUS_LABEL, uzDate } from '@/lib/format';
+
+export const metadata: Metadata = {
+  title: 'Loyihalar',
+  description:
+    "Qo'lda yozilgan, AI bilan qilingan va startap loyihalarim: React, Django, Python, " +
+    'Flutter va Capacitor asosidagi ishlar. Har birida GitHub havolasi va loyiha jurnali bor.',
+  alternates: { canonical: '/projects' },
+};
 
 const TABS = [
   { id: 'manual', label: "Qo'lda qilingan", category: 'MANUAL' },
