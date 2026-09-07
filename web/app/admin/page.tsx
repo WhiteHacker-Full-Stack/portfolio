@@ -12,6 +12,7 @@ import {
   ProjectModal,
   TelegramModal,
   VideoModal,
+  VideoUploadModal,
   type ProjectDraft,
 } from './modals';
 
@@ -48,6 +49,7 @@ export default function AdminPage() {
   const [projectModal, setProjectModal] = useState<{ project: Project | null } | null>(null);
   const [postModal, setPostModal] = useState(false);
   const [videoModal, setVideoModal] = useState(false);
+  const [videoUpload, setVideoUpload] = useState(false);
   const [telegramPost, setTelegramPost] = useState<Post | null>(null);
   const [deletion, setDeletion] = useState<Deletion | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -333,6 +335,14 @@ export default function AdminPage() {
 
         {section === 'youtube' && (
           <div style={s('display: flex; flex-direction: column; gap: 12px;')}>
+            <button
+              type="button"
+              onClick={() => setVideoUpload(true)}
+              className="h-tg f2"
+              style={s("all: unset; cursor: pointer; align-self: flex-start; font-family: 'IBM Plex Mono', monospace; font-size: 12px; border: 1px solid #4FD1FF; color: #4FD1FF; padding: 9px 15px; border-radius: 7px;")}
+            >
+              ↑ YouTube&apos;ga video yuklash
+            </button>
             {videos.map((video) => (
               <div key={video.id} style={s(`${CARD} padding: 12px 16px; display: flex; align-items: center; gap: 16px;`)}>
                 <span
@@ -491,6 +501,24 @@ export default function AdminPage() {
               adminFetch(`/posts/${telegramPost.id}/send-telegram`, { method: 'POST' }),
             )();
             if (!message) setTelegramPost(null);
+            return message;
+          }}
+        />
+      )}
+
+      {videoUpload && (
+        <VideoUploadModal
+          onClose={() => setVideoUpload(false)}
+          onUpload={async (draft) => {
+            const body = new FormData();
+            body.set('video', draft.file);
+            body.set('title', draft.title);
+            body.set('description', draft.description);
+            body.set('privacyStatus', draft.privacyStatus);
+            const message = await run(() =>
+              adminFetch('/youtube/upload', { method: 'POST', body }),
+            )();
+            if (!message) setVideoUpload(false);
             return message;
           }}
         />

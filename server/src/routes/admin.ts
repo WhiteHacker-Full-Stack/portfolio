@@ -1,7 +1,13 @@
+import { randomUUID } from 'node:crypto';
+import fsSync from 'node:fs';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import bcrypt from 'bcryptjs';
 import { Router } from 'express';
 import multer from 'multer';
 import { z } from 'zod';
+import { env } from '../env.js';
+import { YoutubeError, uploadVideo } from '../lib/youtubeUpload.js';
 import { requireAdmin, signAdminToken } from '../lib/auth.js';
 import { categorySchema, statusSchema } from '../lib/enums.js';
 import { ah } from '../lib/http.js';
@@ -21,6 +27,17 @@ import { prisma } from '../prisma.js';
 export const adminRouter = Router();
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 15 * 1024 * 1024 } });
+
+// Videolar xotiraga sig'maydi, shuning uchun ular vaqtinchalik diskka oqim bilan yoziladi.
+fsSync.mkdirSync(env.videoTmpDir, { recursive: true });
+const videoUpload = multer({
+  storage: multer.diskStorage({
+    destination: env.videoTmpDir,
+    filename: (_req, file, cb) =>
+      cb(null, `${randomUUID()}${path.extname(file.originalname).slice(0, 10)}`),
+  }),
+  limits: { fileSize: 2 * 1024 * 1024 * 1024 },
+});
 const IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'];
 const DOC_TYPES = [
   'application/pdf',
@@ -334,6 +351,55 @@ adminRouter.post(
       },
     });
     res.status(201).json(serializeVideo(video));
+  }),
+);
+
+/** Video faylni YouTube'ga yuklaydi va natijani saytga qo'shadi. */
+adminRouter.post(
+  '/youtube/upload',
+  videoUpload.single('video'),
+  ah(async (req, res) => {
+    if (!req.file) return res.status(400).json({ error: 'Video fayl tanlanmagan' });
+
+    const parsed = z
+      .object({
+        title: z.string().trim().min(1).max(100),
+        description: z.string().trim().max(5000).optional(),
+        privacyStatus: z.enum(['private', 'unlisted', 'public']).default('private'),
+      })
+      .safeParse(req.body);
+
+    if (!parsed.success) {
+      await fs.rm(req.file.path, { force: true });
+      return res.status(400).json({ error: 'Video maʼlumotlari notoʻgʻri' });
+    }
+
+    try {
+      const uploaded = await uploadVideo({
+        filePath: req.file.path,
+        title: parsed.data.title,
+        description: parsed.data.description ?? '',
+        privacyStatus: parsed.data.privacyStatus,
+      });
+
+      const video = await prisma.youtubeVideo.create({
+        data: {
+          title: parsed.data.title,
+          youtubeUrl: uploaded.url,
+          youtubeId: uploaded.videoId,
+        },
+      });
+      res.status(201).json({
+        ...serializeVideo(video),
+        // Audit o'tmagan loyihalarda YouTube statusni o'zi private qilib qo'yadi.
+        requestedPrivacy: parsed.data.privacyStatus,
+      });
+    } catch (err) {
+      const message = err instanceof YoutubeError ? err.message : 'YouTube’ga yuklab boʻlmadi';
+      res.status(502).json({ error: message });
+    } finally {
+      await fs.rm(req.file.path, { force: true });
+    }
   }),
 );
 

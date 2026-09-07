@@ -21,6 +21,11 @@ export const env = {
   uploadDir: path.resolve(REPO_ROOT, process.env.UPLOAD_DIR ?? 'web/public/uploads'),
   telegramBotToken: process.env.TELEGRAM_BOT_TOKEN ?? '',
   telegramChannelId: process.env.TELEGRAM_CHANNEL_ID ?? '',
+  youtubeClientId: process.env.YOUTUBE_CLIENT_ID ?? '',
+  youtubeClientSecret: process.env.YOUTUBE_CLIENT_SECRET ?? '',
+  youtubeRefreshToken: process.env.YOUTUBE_REFRESH_TOKEN ?? '',
+  /** Katta video fayllar shu yerga oqim bilan yoziladi, keyin YouTube'ga uzatiladi. */
+  videoTmpDir: process.env.VIDEO_TMP_DIR ?? '/tmp/wh-video-uploads',
 };
 
 if (!env.jwtSecret) {

@@ -398,6 +398,103 @@ export function VideoModal({
   );
 }
 
+export function VideoUploadModal({
+  onClose,
+  onUpload,
+}: {
+  onClose: () => void;
+  onUpload: (draft: {
+    file: File;
+    title: string;
+    description: string;
+    privacyStatus: string;
+  }) => Promise<string | null>;
+}) {
+  const [file, setFile] = useState<File | null>(null);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [privacyStatus, setPrivacyStatus] = useState('public');
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function save() {
+    if (!file) {
+      setError('Video fayl tanlanmagan');
+      return;
+    }
+    setBusy(true);
+    setError(await onUpload({ file, title, description, privacyStatus }));
+    setBusy(false);
+  }
+
+  const sizeMb = file ? (file.size / (1024 * 1024)).toFixed(1) : null;
+
+  return (
+    <Overlay onClose={busy ? () => undefined : onClose}>
+      <div style={s('width: 540px; border: 1px solid #26323D; background: #0F1720; border-radius: 12px; padding: 26px; display: flex; flex-direction: column; gap: 16px;')}>
+        <span style={s("font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 17px;")}>
+          YouTube&apos;ga video yuklash
+        </span>
+
+        <label style={s("border: 1px dashed #26323D; border-radius: 8px; padding: 22px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6; cursor: pointer; display: block;")}>
+          {file ? `${file.name} — ${sizeMb} MB` : 'video faylni bu yerga tashlang'}
+          <input
+            type="file"
+            accept="video/*"
+            hidden
+            onChange={(e) => {
+              const f = e.target.files?.[0] ?? null;
+              setFile(f);
+              if (f && !title) setTitle(f.name.replace(/\.[^.]+$/, ''));
+            }}
+          />
+        </label>
+
+        <input
+          placeholder="Video sarlavhasi"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="f1"
+          style={s(INPUT)}
+        />
+        <textarea
+          placeholder="Tavsif (ixtiyoriy)"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="f1"
+          style={s(`${INPUT} min-height: 80px; resize: vertical;`)}
+        />
+        <select
+          value={privacyStatus}
+          onChange={(e) => setPrivacyStatus(e.target.value)}
+          className="f1"
+          style={s(INPUT)}
+        >
+          <option value="public">Ochiq</option>
+          <option value="unlisted">Havola orqali</option>
+          <option value="private">Maxfiy</option>
+        </select>
+
+        <span style={s("font-family: 'IBM Plex Mono', monospace; font-size: 10px; line-height: 1.6; color: #FFB454;")}>
+          Diqqat: Google auditidan oʻtmagan loyihalarda YouTube barcha videolarni
+          <strong> maxfiy</strong> qilib qoʻyadi. Ochiq qilish uchun YouTube Studio&apos;ga kirib
+          qoʻlda oʻzgartirasiz.
+        </span>
+
+        <ErrorLine message={error} />
+        <div style={s(FOOTER)}>
+          <button type="button" onClick={onClose} disabled={busy} className="h-txt f2" style={s(CANCEL_BTN)}>
+            Bekor qilish
+          </button>
+          <button type="button" onClick={save} disabled={busy} className="h-white f3" style={s(SAVE_BTN)}>
+            {busy ? 'Yuklanmoqda… (yopmang)' : 'Yuklash'}
+          </button>
+        </div>
+      </div>
+    </Overlay>
+  );
+}
+
 export function DeleteModal({
   label,
   onClose,

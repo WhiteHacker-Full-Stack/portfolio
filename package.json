@@ -15,6 +15,7 @@
     "db:deploy": "prisma migrate deploy --schema=server/prisma/schema.prisma",
     "db:seed": "tsx server/prisma/seed.ts",
     "db:admin": "tsx server/prisma/createAdmin.ts",
+    "youtube:auth": "tsx server/prisma/youtubeAuth.ts",
     "db:studio": "prisma studio --schema=server/prisma/schema.prisma"
   },
   "devDependencies": {
