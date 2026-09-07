@@ -1,40 +1,41 @@
 import { s } from '@/lib/css';
 
+// Faqat kursda o'rganilgan va mustaqil yoziladigan texnologiyalar.
+// Qolgan hamma narsa AI bilan ishlanadi — bu ikkinchi paragrafda ochiq aytilgan.
 const STACK = [
-  { name: 'FRONTEND', items: ['Next.js', 'React', 'Tailwind', 'TypeScript'] },
-  { name: 'BACKEND', items: ['Node.js', 'Express', 'Prisma', 'SQLite', 'Postgres'] },
-  { name: 'MOBILE', items: ['Capacitor', 'Android build'] },
-  { name: 'AI / API', items: ['Gemini API', 'Embeddings', 'Prompt tooling'] },
-  { name: 'NETWORKING', items: ['Tailscale', 'Nginx', 'Uy serveri'] },
+  { name: 'ALGORITM ASOSI', items: ['C++'] },
+  { name: 'FRONTEND', items: ['HTML', 'CSS', 'Bootstrap', 'JavaScript', 'React'] },
+  { name: 'BACKEND', items: ['Python', 'Django', 'DRF'] },
+  { name: 'BAZA', items: ['PostgreSQL'] },
 ];
 
 const TIMELINE = [
   {
     year: '2026',
-    title: 'EduTrack pilotda',
-    text: "Uchta o'quv markazida real foydalanuvchilar bilan ishlayapti.",
+    title: "AI bilan ko'p platformali ishlab chiqish",
+    text: "O'rgangan asosim ustiga AI'ni qo'shdim — endi faqat web emas, mobil ilovalar ham chiqaraman.",
   },
   {
     year: '2025',
-    title: "Mobil tomonga o'tish",
-    text: "Capacitor bilan bitta kodbazadan web va Android chiqarishni o'zlashtirdim.",
+    title: 'Loyiha menejeri',
+    text: "Markaz asoschisi ochgan yangi kompaniyada bir muddat PM bo'lib ishladim, shu bilan birga dars berishni davom ettirdim.",
   },
   {
     year: '2024',
-    title: 'AI ish oqimimga kirdi',
-    text: "Prototip va hujjatlashtirishni tezlashtirish uchun model chaqiruvlarini quvurga qo'shdim.",
+    title: "Frontend va backend — bir yilda",
+    text: "iFraganus IT o'quv markazida ikkala yo'nalishni birga o'qib tugatdim va o'sha yerda dars bera boshladim.",
   },
   {
-    year: '2022',
-    title: "Birinchi to'liq stack loyiha",
-    text: "Node.js va Postgres bilan birinchi ishlab turgan mahsulotni chiqardim.",
+    year: '2023',
+    title: 'Dasturlashga birinchi qadam',
+    text: "15-iyulda boshladim. Dastlabki ikki oy poydevor sifatida C++ va algoritm asoslari.",
   },
 ];
 
 const BIO = [
-  "Men mahsulotni boshidan oxirigacha quraman: interfeys, API, ma'lumotlar bazasi va deploy. Ko'p yillar davomida veb bilan ishlaganimdan keyin mobil tomonga o'tdim — hozir bitta kodbazadan web va Android uchun ilova chiqarish men uchun odatiy ish oqimi.",
-  "AI'ni ishimda vosita sifatida ishlataman: prototip, refactoring va hujjatlashtirish uchun. Qo'lda yozgan kodim va AI bilan tezlashtirgan loyihalarimni alohida ajratib ko'rsataman — chunki ikkalasi boshqa-boshqa mahorat.",
-  "Bo'sh vaqtimda uy serverimni sozlayman, tarmoq bilan o'ynayman va o'rganganlarimni Telegram kanalimda yozib boraman.",
+  "Dasturlashni 2023-yilning iyulida boshladim. iFraganus IT o'quv markazida frontend va backendni bir vaqtda o'qib, bir yil ichida tugatdim: interfeys tomonda HTML, CSS, Bootstrap, JavaScript va React; server tomonda Python, Django, DRF va PostgreSQL.",
+  "Yonimdagi ro'yxat — o'zim o'rganib, tushunib yozadigan narsalarim. Undan tashqaridagi texnologiyalarni AI bilan birga ishlataman: vazifani tavsiflab, kodni birga yozamiz va natijani sinab ko'raman. Shu yo'l bilan web'dan tashqari mobil ilovalar ham chiqardim. Nimani o'zim yozganimni va nimada AI yordam berganini yashirmayman — loyihalar bo'limi ham shunga qarab ajratilgan.",
+  "O'sha markazda boshlovchilarga dars beraman: algoritm asoslaridan (C++) frontend va backendgacha to'liq kurs. 2025-yilda markaz asoschisi ochgan yangi kompaniyada bir muddat loyiha menejeri bo'lib ishladim.",
 ];
 
 export default function AboutPage() {

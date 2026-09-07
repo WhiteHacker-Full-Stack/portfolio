@@ -5,7 +5,7 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'WhiteHacker — Full Stack Web Developer va Wibe Coder',
   description:
-    "Next.js va Node.js bilan mahsulot quraman, AI'ni ish oqimimga qo'shaman va startaplarimni ochiq holda olib boraman.",
+    "React, Python va Django bilan ishlayman, AI bilan barcha qurilmalar uchun ilova yarataman va iFraganus IT o'quv markazida dasturlashdan dars beraman.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
