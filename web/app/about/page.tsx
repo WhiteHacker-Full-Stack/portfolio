@@ -41,7 +41,7 @@ const TIMELINE = [
 ];
 
 const BIO = [
-  "Dasturlashni 2023-yilning iyulida boshladim. iFraganus IT o'quv markazida frontend va backendni bir vaqtda o'qib, bir yil ichida tugatdim: interfeys tomonda HTML, CSS, Bootstrap, JavaScript va React; server tomonda Python, Django, DRF va PostgreSQL.",
+  "Men Og'abek Yoqubjonov — WhiteHacker nomi bilan tanilgan Full Stack Web Developer. Dasturlashni 2023-yilning iyulida boshladim. iFraganus IT o'quv markazida frontend va backendni bir vaqtda o'qib, bir yil ichida tugatdim: interfeys tomonda HTML, CSS, Bootstrap, JavaScript va React; server tomonda Python, Django, DRF va PostgreSQL.",
   "Yonimdagi ro'yxat — o'zim o'rganib, tushunib yozadigan narsalarim. Undan tashqaridagi texnologiyalarni AI bilan birga ishlataman: vazifani tavsiflab, kodni birga yozamiz va natijani sinab ko'raman. Shu yo'l bilan web'dan tashqari mobil ilovalar ham chiqardim. Nimani o'zim yozganimni va nimada AI yordam berganini yashirmayman — loyihalar bo'limi ham shunga qarab ajratilgan.",
   "O'sha markazda boshlovchilarga dars beraman: algoritm asoslaridan (C++) frontend va backendgacha to'liq kurs. 2025-yilda markaz asoschisi ochgan yangi kompaniyada bir muddat loyiha menejeri bo'lib ishladim.",
 ];
