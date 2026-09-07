@@ -43,6 +43,10 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, 'max-snippet': -1, 'max-image-preview': 'large' },
   },
+  // Google Search Console egalikni shu teg orqali tasdiqlaydi (DNS TXT o'rniga).
+  verification: {
+    google: '5Mwyth5ZTOn3u3TpXwykXn_ZOOexgyGFKXRnnZYqGUI',
+  },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
