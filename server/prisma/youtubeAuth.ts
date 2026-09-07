@@ -3,15 +3,19 @@
  *
  *   npm run youtube:auth
  *
- * .env da YOUTUBE_CLIENT_ID va YOUTUBE_CLIENT_SECRET to'ldirilgan bo'lishi kerak.
- * Skript havola beradi, siz brauzerda ruxsat berasiz, Google kod qaytaradi,
- * shu kodni terminalga qo'yasiz — natijada refresh token chiqadi.
+ * Buni **brauzer bor kompyuterda** (ya'ni o'z Mac'ingizda) ishga tushiring, serverda emas.
+ * Olingan refresh token istalgan mashinada ishlaydi — u OAuth mijoziga bog'langan.
+ *
+ * Google 2023-yildan "OOB" (kodni qo'lda ko'chirish) usulini bloklagan, shuning uchun
+ * bu yerda tavsiya etilgan loopback oqimi ishlatiladi: skript localhost'da kichik
+ * server ko'taradi va Google kodni to'g'ridan-to'g'ri o'shanga qaytaradi.
  */
-import { createInterface } from 'node:readline/promises';
+import { createServer } from 'node:http';
 import { env } from '../src/env.js';
 import { YOUTUBE_SCOPE } from '../src/lib/youtubeUpload.js';
 
-const REDIRECT = 'urn:ietf:wg:oauth:2.0:oob';
+const PORT = 4599;
+const REDIRECT = `http://localhost:${PORT}`;
 
 if (!env.youtubeClientId || !env.youtubeClientSecret) {
   console.error('YOUTUBE_CLIENT_ID va YOUTUBE_CLIENT_SECRET .env faylda toʻldirilmagan.');
@@ -30,13 +34,33 @@ const authUrl =
     prompt: 'consent',
   });
 
-console.log('\n1. Shu havolani brauzerda oching va ruxsat bering:\n');
+console.log('\nBrauzerda shu havolani oching va ruxsat bering:\n');
 console.log(authUrl);
-console.log('\n2. Google bergan kodni shu yerga qoʻying.\n');
+console.log('\nRuxsat berganingizdan keyin bu oyna oʻzi davom etadi…\n');
 
-const rl = createInterface({ input: process.stdin, output: process.stdout });
-const code = (await rl.question('Kod: ')).trim();
-rl.close();
+const code: string = await new Promise((resolve, reject) => {
+  const server = createServer((req, res) => {
+    const url = new URL(req.url ?? '/', REDIRECT);
+    const received = url.searchParams.get('code');
+    const error = url.searchParams.get('error');
+
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(
+      `<body style="background:#0B0F14;color:#E8EDF2;font-family:monospace;padding:60px;text-align:center">
+         <h2>${received ? 'Tayyor — terminalga qayting.' : `Xato: ${error ?? 'kod kelmadi'}`}</h2>
+       </body>`,
+    );
+
+    server.close();
+    received ? resolve(received) : reject(new Error(error ?? 'kod kelmadi'));
+  });
+
+  server.listen(PORT);
+  setTimeout(() => {
+    server.close();
+    reject(new Error('vaqt tugadi (5 daqiqa)'));
+  }, 5 * 60 * 1000);
+});
 
 const res = await fetch('https://oauth2.googleapis.com/token', {
   method: 'POST',
@@ -56,6 +80,7 @@ if (!res.ok || !body.refresh_token) {
   process.exit(1);
 }
 
-console.log('\nTayyor. Shu qatorni .env fayliga qoʻshing:\n');
+console.log('\nTayyor. Shu qatorni serverdagi .env fayliga qoʻshing:\n');
 console.log(`YOUTUBE_REFRESH_TOKEN="${body.refresh_token}"`);
 console.log('\nKeyin: sudo systemctl restart whitehacker-api\n');
+process.exit(0);
