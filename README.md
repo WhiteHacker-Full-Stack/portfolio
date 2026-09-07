@@ -93,6 +93,30 @@ qilish shart emas. Shu sababli uni admin paneldan o'chirib bo'lmaydi.
 PDF ichidagi havolalar `SITE_URL` dan olinadi, shuning uchun deploydan oldin uni haqiqiy
 domeningizga sozlang.
 
+## Zaxira nusxa (Telegram orqali)
+
+Bot bazani va yuklangan fayllarni arxivlab, tasdiqlangan shaxsiy suhbatlarga yuboradi.
+
+**Ulanish** — Telegramda `@whitehackerstudio_bot` ga yozing:
+
+```
+/login <username> <parol>
+```
+
+Admin panel paroli ishlaydi. Parol yuborilgan xabar **darhol o'chiriladi**, chat tarixida
+qolmaydi. Besh marta noto'g'ri urinishdan keyin 15 daqiqa blok.
+
+**Bot buyruqlari:** `/backup` (hoziroq olish), `/status`, `/stop` (obunani bekor qilish).
+
+**Boshqaruv** — admin panel → **Zaxira** bo'limi: yoqish/o'chirish, oraliq (1–720 soat),
+qabul qiluvchilar ro'yxati, "Hozir yuborish" tugmasi.
+
+Arxiv ichida: `dev.db` (sqlite3 `.backup` bilan olingan — yozuv o'rtasida ushlanmaydi) va
+`uploads/` katalogi. Rejalashtiruvchi har 5 daqiqada tekshiradi, oxirgi yuborilgan vaqt
+bazada saqlanadi — server qayta ishga tushsa ham jadval buzilmaydi.
+
+Serverda `sqlite3` paketi kerak (`apt install sqlite3`).
+
 ## Izohlar tizimi
 
 Brauzer `localStorage`da `crypto.randomUUID()` bilan `deviceToken` saqlaydi. Birinchi izohda
