@@ -63,8 +63,24 @@ export type TelegramUpdate = {
     message_id: number;
     chat: { id: number; type: string; username?: string; first_name?: string };
     text?: string;
+    document?: { file_id: string; file_name?: string; file_size?: number };
   };
 };
+
+/** Telegram bot API orqali yuborilgan faylni yuklab oladi (chegara: 20 MB). */
+export async function downloadFile(fileId: string, destPath: string): Promise<void> {
+  const info = await fetch(`${API}/bot${env.telegramBotToken}/getFile?file_id=${fileId}`)
+    .then((r) => r.json() as Promise<{ ok: boolean; result?: { file_path?: string }; description?: string }>);
+  if (!info.ok || !info.result?.file_path) {
+    throw new TelegramError(info.description ?? 'Faylni olib boʻlmadi');
+  }
+
+  const res = await fetch(`${API}/file/bot${env.telegramBotToken}/${info.result.file_path}`);
+  if (!res.ok) throw new TelegramError(`Fayl yuklanmadi: ${res.status}`);
+
+  const { writeFile } = await import('node:fs/promises');
+  await writeFile(destPath, Buffer.from(await res.arrayBuffer()));
+}
 
 /** Long polling — webhook uchun ochiq domen shart emas. */
 export async function getUpdates(offset: number, timeoutSec = 30): Promise<TelegramUpdate[]> {

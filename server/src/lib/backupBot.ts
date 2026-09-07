@@ -1,14 +1,18 @@
+import { randomUUID } from 'node:crypto';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import bcrypt from 'bcryptjs';
+import { env } from '../env.js';
 import { prisma } from '../prisma.js';
-import { createBackup, getSettings } from './backup.js';
+import { applyRestore, createBackup, getSettings, inspectArchive } from './backup.js';
 import {
   deleteMessage,
+  downloadFile,
   getUpdates,
   hasTelegram,
   sendBackupDocument,
   sendChatMessage,
 } from './telegram.js';
-import fs from 'node:fs/promises';
 
 const HELP = [
   'Zaxira nusxa boti.',
@@ -17,7 +21,24 @@ const HELP = [
   '/backup — hoziroq zaxira nusxa olish',
   '/status — sozlama va holat',
   '/stop — obunani bekor qilish',
+  '',
+  'Bazani tiklash: zaxira arxivini shu yerga fayl qilib yuboring.',
 ].join('\n');
+
+/** Tiklashni kutayotgan arxivlar: tasodifiy bosishdan himoya uchun kod bilan tasdiqlanadi. */
+const pendingRestore = new Map<
+  string,
+  { workDir: string; archivePath: string; code: string; expiresAt: number }
+>();
+const RESTORE_TTL_MS = 10 * 60 * 1000;
+
+async function dropPending(chatId: string) {
+  const p = pendingRestore.get(chatId);
+  if (!p) return;
+  pendingRestore.delete(chatId);
+  await fs.rm(p.workDir, { recursive: true, force: true });
+  await fs.rm(p.archivePath, { force: true });
+}
 
 /** Ketma-ket muvaffaqiyatsiz urinishlarni cheklaydi. */
 const attempts = new Map<string, { count: number; until: number }>();
@@ -120,9 +141,110 @@ async function handleStatus(chatId: string) {
   );
 }
 
+/** Yuborilgan arxivni tekshiradi va tasdiqlash kodini so'raydi — hali hech narsa almashtirilmaydi. */
+async function handleDocument(
+  chatId: string,
+  doc: { file_id: string; file_name?: string; file_size?: number },
+) {
+  const name = doc.file_name ?? 'fayl';
+  if (!/\.tar\.gz$/i.test(name)) {
+    await sendChatMessage(chatId, 'Faqat <code>.tar.gz</code> zaxira arxivi qabul qilinadi.');
+    return;
+  }
+  if ((doc.file_size ?? 0) > 19 * 1024 * 1024) {
+    await sendChatMessage(
+      chatId,
+      'Fayl 20 MB dan katta — Telegram boti bunday faylni yuklab ololmaydi.\n' +
+        'Bu holatda serverga SSH orqali qo‘lda tiklash kerak.',
+    );
+    return;
+  }
+
+  await dropPending(chatId);
+  await sendChatMessage(chatId, 'Arxiv tekshirilmoqda…');
+
+  const workDir = path.join(env.videoTmpDir, `restore-${randomUUID()}`);
+  const archivePath = path.join(env.videoTmpDir, `restore-${randomUUID()}.tar.gz`);
+
+  try {
+    await downloadFile(doc.file_id, archivePath);
+    const check = await inspectArchive(archivePath, workDir);
+
+    if (!check.ok) {
+      await fs.rm(workDir, { recursive: true, force: true });
+      await fs.rm(archivePath, { force: true });
+      await sendChatMessage(chatId, `Tiklab boʻlmaydi.\n${check.problem}`);
+      return;
+    }
+
+    const current = await prisma.project.count();
+    const code = String(Math.floor(1000 + Math.random() * 9000));
+    pendingRestore.set(chatId, { workDir, archivePath, code, expiresAt: Date.now() + RESTORE_TTL_MS });
+
+    await sendChatMessage(
+      chatId,
+      `<b>Arxiv tekshirildi</b>\n` +
+        `Loyihalar: ${check.projects}\nYozuvlar: ${check.posts}\n` +
+        `Yuklangan fayllar: ${check.hasUploads ? check.uploadCount : 'arxivda yoʻq'}\n\n` +
+        `Hozirgi bazada ${current} ta loyiha bor — u <b>butunlay almashtiriladi</b>.\n` +
+        `Almashtirishdan oldin joriy holatdan nusxa saqlanadi.\n\n` +
+        `Tasdiqlash uchun yuboring:\n<code>/restore ${code}</code>\n\n` +
+        `10 daqiqadan keyin bekor boʻladi.`,
+    );
+  } catch (err) {
+    await fs.rm(workDir, { recursive: true, force: true });
+    await fs.rm(archivePath, { force: true });
+    await sendChatMessage(chatId, `Xato: ${err instanceof Error ? err.message : 'nomaʼlum'}`);
+  }
+}
+
+async function handleRestore(chatId: string, args: string[]) {
+  const pending = pendingRestore.get(chatId);
+  if (!pending || pending.expiresAt < Date.now()) {
+    await dropPending(chatId);
+    await sendChatMessage(chatId, 'Kutilayotgan arxiv yoʻq. Avval zaxira faylini yuboring.');
+    return;
+  }
+  if (args[0] !== pending.code) {
+    await sendChatMessage(chatId, `Kod notoʻgʻri. Yuborish kerak: <code>/restore ${pending.code}</code>`);
+    return;
+  }
+
+  pendingRestore.delete(chatId);
+  await sendChatMessage(chatId, 'Baza almashtirilmoqda…');
+
+  try {
+    const { safetyCopy } = await applyRestore(pending.workDir);
+    await sendChatMessage(
+      chatId,
+      `<b>Tiklandi.</b>\nEski baza saqlandi:\n<code>${path.basename(safetyCopy)}</code>\n\n` +
+        `Xizmat qayta ishga tushmoqda — 10 soniyadan keyin sayt yangi baza bilan ishlaydi.`,
+    );
+  } catch (err) {
+    await sendChatMessage(chatId, `Tiklashda xato: ${err instanceof Error ? err.message : 'nomaʼlum'}`);
+    return;
+  } finally {
+    await fs.rm(pending.workDir, { recursive: true, force: true });
+    await fs.rm(pending.archivePath, { force: true });
+  }
+
+  // Prisma eski faylni ochiq ushlab turadi — systemd qayta ishga tushirsin.
+  setTimeout(() => process.exit(0), 1500);
+}
+
 async function handleMessage(msg: NonNullable<import('./telegram.js').TelegramUpdate['message']>) {
   const chatId = String(msg.chat.id);
   if (msg.chat.type !== 'private') return;      // faqat shaxsiy suhbat
+
+  if (msg.document) {
+    const sub = await isSubscribed(chatId);
+    if (!sub) {
+      await sendChatMessage(chatId, 'Avval tasdiqlang: <code>/login username parol</code>');
+      return;
+    }
+    return handleDocument(chatId, msg.document);
+  }
+
   const text = (msg.text ?? '').trim();
   if (!text.startsWith('/')) return;
 
@@ -139,6 +261,7 @@ async function handleMessage(msg: NonNullable<import('./telegram.js').TelegramUp
   }
 
   if (cmd === '/backup') return handleBackup(chatId);
+  if (cmd === '/restore') return handleRestore(chatId, args);
   if (cmd === '/status') return handleStatus(chatId);
   if (cmd === '/stop') {
     await prisma.backupSubscriber.delete({ where: { chatId } });

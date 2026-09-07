@@ -82,6 +82,94 @@ export async function sendBackupToSubscribers(reason: string): Promise<{
   return { sent, failed, sizeBytes: backup.sizeBytes };
 }
 
+export type RestoreCheck = {
+  ok: boolean;
+  problem?: string;
+  projects?: number;
+  posts?: number;
+  hasUploads?: boolean;
+  uploadCount?: number;
+};
+
+/**
+ * Arxivni vaqtinchalik joyga ochib, ichidagi baza haqiqiy va butun ekanini tekshiradi.
+ * Hech narsa almashtirilmaydi — faqat xulosa qaytadi.
+ */
+export async function inspectArchive(archivePath: string, workDir: string): Promise<RestoreCheck> {
+  await fs.mkdir(workDir, { recursive: true });
+  try {
+    await run(`tar xzf "${archivePath}" -C "${workDir}"`);
+  } catch {
+    return { ok: false, problem: 'Arxivni ocholmadim — tar.gz fayl emas yoki buzilgan.' };
+  }
+
+  const dbPath = path.join(workDir, 'dev.db');
+  if (!(await fs.stat(dbPath).catch(() => null))) {
+    return { ok: false, problem: 'Arxiv ichida dev.db topilmadi.' };
+  }
+
+  const q = async (sql: string) =>
+    (await run(`sqlite3 "${dbPath}" "${sql}"`)).stdout.trim();
+
+  const integrity = await q('PRAGMA integrity_check;').catch(() => 'xato');
+  if (integrity !== 'ok') return { ok: false, problem: `Baza butun emas: ${integrity}` };
+
+  const tables = await q("SELECT name FROM sqlite_master WHERE type='table';").catch(() => '');
+  for (const required of ['Project', 'AdminUser', 'BlogPost']) {
+    if (!tables.split('\n').includes(required)) {
+      return { ok: false, problem: `Bu portfolio bazasi emas — "${required}" jadvali yoʻq.` };
+    }
+  }
+
+  const projects = Number(await q('SELECT COUNT(*) FROM Project;').catch(() => '0'));
+  const posts = Number(await q('SELECT COUNT(*) FROM BlogPost;').catch(() => '0'));
+  const admins = Number(await q('SELECT COUNT(*) FROM AdminUser;').catch(() => '0'));
+  if (admins === 0) return { ok: false, problem: 'Bazada admin hisobi yoʻq — kirib boʻlmaydi.' };
+
+  const uploadsDir = path.join(workDir, path.basename(env.uploadDir));
+  const uploads = await fs.readdir(uploadsDir).catch(() => null);
+
+  return {
+    ok: true,
+    projects,
+    posts,
+    hasUploads: uploads !== null,
+    uploadCount: uploads?.filter((f) => f !== '.gitkeep').length ?? 0,
+  };
+}
+
+/**
+ * Tekshirilgan arxivni o'rniga qo'yadi. Avval joriy holatdan xavfsizlik nusxasi olinadi.
+ * Prisma bazani ochiq ushlab turgani uchun almashtirgandan keyin jarayon qayta ishga tushishi shart.
+ */
+export async function applyRestore(workDir: string): Promise<{ safetyCopy: string }> {
+  const dbPath = path.join(REPO_ROOT, 'server/prisma/dev.db');
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 16);
+  const safetyCopy = path.join(path.dirname(dbPath), `dev.db.before-restore-${stamp}`);
+
+  await run(`sqlite3 "${dbPath}" ".backup '${safetyCopy}'"`).catch(() =>
+    fs.copyFile(dbPath, safetyCopy),
+  );
+
+  await prisma.$disconnect();
+
+  // SQLite yon fayllari eski holatni qaytarib yubormasligi uchun ular ham olib tashlanadi.
+  for (const suffix of ['-wal', '-shm']) {
+    await fs.rm(`${dbPath}${suffix}`, { force: true });
+  }
+  await fs.copyFile(path.join(workDir, 'dev.db'), dbPath);
+
+  const srcUploads = path.join(workDir, path.basename(env.uploadDir));
+  if (await fs.stat(srcUploads).catch(() => null)) {
+    await fs.mkdir(env.uploadDir, { recursive: true });
+    for (const name of await fs.readdir(srcUploads)) {
+      await fs.copyFile(path.join(srcUploads, name), path.join(env.uploadDir, name)).catch(() => undefined);
+    }
+  }
+
+  return { safetyCopy };
+}
+
 export async function getSettings() {
   return prisma.backupSetting.upsert({
     where: { id: SETTING_ID },
