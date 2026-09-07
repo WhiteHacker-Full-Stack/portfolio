@@ -16,7 +16,7 @@ import {
   type ProjectDraft,
 } from './modals';
 
-type Section = 'projects' | 'blogs' | 'docs' | 'youtube' | 'comments' | 'settings';
+type Section = 'projects' | 'blogs' | 'docs' | 'youtube' | 'comments' | 'backup' | 'settings';
 
 const SECTIONS: { id: Section; label: string; primary: string }[] = [
   { id: 'projects', label: 'Loyihalar', primary: '+ Yangi loyiha' },
@@ -24,6 +24,7 @@ const SECTIONS: { id: Section; label: string; primary: string }[] = [
   { id: 'docs', label: 'Hujjatlar', primary: '+ Hujjat yuklash' },
   { id: 'youtube', label: 'YouTube', primary: '+ Video link' },
   { id: 'comments', label: 'Izohlar', primary: 'Yangilash' },
+  { id: 'backup', label: 'Zaxira', primary: 'Hozir yuborish' },
   { id: 'settings', label: 'Sozlamalar', primary: 'Sozlamalar' },
 ];
 
@@ -33,6 +34,14 @@ const LINK_BTN = "all: unset; cursor: pointer; font-family: 'IBM Plex Mono', mon
 const DEL_BTN = "all: unset; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8B99A6;";
 
 type Deletion = { label: string; path: string };
+
+type BackupInfo = {
+  enabled: boolean;
+  intervalHours: number;
+  lastRunAt: string | null;
+  botConfigured: boolean;
+  subscribers: { id: string; name: string; createdAt: string; lastSentAt: string | null }[];
+};
 
 export default function AdminPage() {
   const [ready, setReady] = useState(false);
@@ -45,6 +54,7 @@ export default function AdminPage() {
   const [docs, setDocs] = useState<Doc[]>([]);
   const [videos, setVideos] = useState<Video[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
+  const [backup, setBackup] = useState<BackupInfo | null>(null);
 
   const [projectModal, setProjectModal] = useState<{ project: Project | null } | null>(null);
   const [postModal, setPostModal] = useState(false);
@@ -56,18 +66,20 @@ export default function AdminPage() {
 
   const load = useCallback(async () => {
     try {
-      const [p, b, d, v, c] = await Promise.all([
+      const [p, b, d, v, c, bk] = await Promise.all([
         adminFetch<Project[]>('/projects'),
         adminFetch<Post[]>('/posts'),
         fetch('/api/documents').then((r) => r.json() as Promise<Doc[]>),
         fetch('/api/youtube').then((r) => r.json() as Promise<Video[]>),
         adminFetch<Comment[]>('/comments'),
+        adminFetch<BackupInfo>('/backup'),
       ]);
       setProjects(p);
       setPosts(b);
       setDocs(d);
       setVideos(v);
       setComments(c);
+      setBackup(bk);
       setError(null);
     } catch (err) {
       if (err instanceof Unauthorized) {
@@ -143,6 +155,20 @@ export default function AdminPage() {
     return result;
   }
 
+  async function saveBackupSettings(next: { enabled: boolean; intervalHours: number }) {
+    setBackup((b) => (b ? { ...b, ...next } : b));
+    const message = await run(() =>
+      adminFetch('/backup', { method: 'PUT', body: JSON.stringify(next) }),
+    )();
+    if (message) setError(message);
+  }
+
+  async function sendBackupNow() {
+    setError(null);
+    const message = await run(() => adminFetch('/backup/send', { method: 'POST' }))();
+    setError(message ?? 'Zaxira nusxa Telegramga yuborildi.');
+  }
+
   async function uploadDocument(file: File) {
     const body = new FormData();
     body.set('title', file.name);
@@ -171,6 +197,7 @@ export default function AdminPage() {
     else if (section === 'blogs') setPostModal(true);
     else if (section === 'youtube') setVideoModal(true);
     else if (section === 'docs') fileInput.current?.click();
+    else if (section === 'backup') void sendBackupNow();
     else void load();
   }
 
@@ -425,6 +452,100 @@ export default function AdminPage() {
                 )}
               </div>
             ))}
+          </div>
+        )}
+
+        {section === 'backup' && backup && (
+          <div style={s('display: flex; flex-direction: column; gap: 14px;')}>
+            {!backup.botConfigured && (
+              <div style={s("font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #ff6b6b;")}>
+                TELEGRAM_BOT_TOKEN sozlanmagan - bot ishlamaydi.
+              </div>
+            )}
+
+            <div style={s(`${CARD} padding: 18px; display: flex; flex-direction: column; gap: 14px;`)}>
+              <span style={s("font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px;")}>
+                Avtomatik yuborish
+              </span>
+
+              <label style={s('display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px;')}>
+                <input
+                  type="checkbox"
+                  checked={backup.enabled}
+                  onChange={(e) =>
+                    void saveBackupSettings({ enabled: e.target.checked, intervalHours: backup.intervalHours })
+                  }
+                />
+                Yoqilgan
+              </label>
+
+              <label style={s('display: flex; align-items: center; gap: 10px; font-size: 14px;')}>
+                Har
+                <input
+                  type="number"
+                  min={1}
+                  max={720}
+                  value={backup.intervalHours}
+                  onChange={(e) =>
+                    setBackup((b) => (b ? { ...b, intervalHours: Number(e.target.value) } : b))
+                  }
+                  onBlur={(e) =>
+                    void saveBackupSettings({
+                      enabled: backup.enabled,
+                      intervalHours: Math.min(720, Math.max(1, Number(e.target.value) || 24)),
+                    })
+                  }
+                  className="f1"
+                  style={s('background: #141C24; border: 1px solid #26323D; border-radius: 8px; padding: 8px 10px; color: #E8EDF2; font-size: 14px; width: 90px;')}
+                />
+                soatda
+              </label>
+
+              <span style={s("font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6;")}>
+                Oxirgi yuborilgan: {backup.lastRunAt ? uzDate(backup.lastRunAt) : 'hali yoq'}
+              </span>
+            </div>
+
+            <div style={s(`${CARD} padding: 18px; display: flex; flex-direction: column; gap: 12px;`)}>
+              <span style={s("font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px;")}>
+                Qabul qiluvchilar ({backup.subscribers.length})
+              </span>
+
+              {backup.subscribers.length === 0 ? (
+                <span style={s("font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1.8; color: #8B99A6;")}>
+                  Hali hech kim tasdiqlanmagan. Telegramda botga yozing:
+                  <br />
+                  <span style={s('color: #4FD1FF;')}>/login foydalanuvchi parol</span>
+                  <br />
+                  Parol yuborilgan xabar darhol ochiriladi.
+                </span>
+              ) : (
+                backup.subscribers.map((sub) => (
+                  <div
+                    key={sub.id}
+                    style={s('display: flex; align-items: center; gap: 14px; border-top: 1px solid #26323D; padding-top: 10px;')}
+                  >
+                    <span style={s('flex: 1; display: flex; flex-direction: column; gap: 4px;')}>
+                      <span style={s('font-size: 14px; font-weight: 600;')}>{sub.name}</span>
+                      <span style={s("font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6;")}>
+                        qoshilgan {uzDate(sub.createdAt)}
+                        {sub.lastSentAt ? ` \u00b7 oxirgi ${uzDate(sub.lastSentAt)}` : ' \u00b7 hali yuborilmagan'}
+                      </span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setDeletion({ label: sub.name, path: `/backup/subscribers/${sub.id}` })
+                      }
+                      className="h-danger f2"
+                      style={s(DEL_BTN)}
+                    >
+                      O&apos;chirish
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         )}
 

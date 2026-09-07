@@ -1,6 +1,8 @@
 import cors from 'cors';
 import express from 'express';
 import { env } from './env.js';
+import { startBackupScheduler } from './lib/backup.js';
+import { startBackupBot } from './lib/backupBot.js';
 import { errorHandler } from './lib/http.js';
 import { adminRouter } from './routes/admin.js';
 import { publicRouter } from './routes/public.js';
@@ -33,4 +35,6 @@ app.use(errorHandler);
 
 app.listen(env.port, env.host, () => {
   console.log(`API http://${env.host}:${env.port}`);
+  startBackupBot();
+  startBackupScheduler();
 });

@@ -1,3 +1,4 @@
+import { readFile } from 'node:fs/promises';
 import type { BlogPost, Project } from '@prisma/client';
 import { env } from '../env.js';
 
@@ -16,6 +17,64 @@ function escapeHtml(text: string): string {
 function excerpt(content: string): string {
   const flat = content.replace(/\s+/g, ' ').trim();
   return flat.length > EXCERPT_LIMIT ? `${flat.slice(0, EXCERPT_LIMIT).trimEnd()}…` : flat;
+}
+
+export function hasTelegram(): boolean {
+  return Boolean(env.telegramBotToken);
+}
+
+/** Zaxira arxivini shaxsiy suhbatga fayl sifatida yuboradi. */
+export async function sendBackupDocument(
+  chatId: string,
+  filePath: string,
+  fileName: string,
+  caption: string,
+): Promise<void> {
+  const file = await readFile(filePath);
+  const form = new FormData();
+  form.set('chat_id', chatId);
+  form.set('caption', caption);
+  form.set('document', new Blob([new Uint8Array(file)]), fileName);
+
+  const res = await fetch(`${API}/bot${env.telegramBotToken}/sendDocument`, {
+    method: 'POST',
+    body: form,
+  });
+  const body = (await res.json()) as { ok: boolean; description?: string };
+  if (!body.ok) throw new TelegramError(body.description ?? 'sendDocument muvaffaqiyatsiz');
+}
+
+/** Bot suhbatidagi xabarni o'chiradi — parol chat tarixida qolmasligi uchun. */
+export async function deleteMessage(chatId: string, messageId: number): Promise<void> {
+  await fetch(`${API}/bot${env.telegramBotToken}/deleteMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: chatId, message_id: messageId }),
+  }).catch(() => undefined);
+}
+
+export async function sendChatMessage(chatId: string, text: string): Promise<void> {
+  await callTelegram('sendMessage', { chat_id: chatId, text, parse_mode: 'HTML' });
+}
+
+export type TelegramUpdate = {
+  update_id: number;
+  message?: {
+    message_id: number;
+    chat: { id: number; type: string; username?: string; first_name?: string };
+    text?: string;
+  };
+};
+
+/** Long polling — webhook uchun ochiq domen shart emas. */
+export async function getUpdates(offset: number, timeoutSec = 30): Promise<TelegramUpdate[]> {
+  const res = await fetch(
+    `${API}/bot${env.telegramBotToken}/getUpdates?offset=${offset}&timeout=${timeoutSec}&allowed_updates=["message"]`,
+    { signal: AbortSignal.timeout((timeoutSec + 10) * 1000) },
+  );
+  const body = (await res.json()) as { ok: boolean; result?: TelegramUpdate[]; description?: string };
+  if (!body.ok) throw new TelegramError(body.description ?? 'getUpdates muvaffaqiyatsiz');
+  return body.result ?? [];
 }
 
 async function callTelegram(method: string, payload: unknown): Promise<void> {

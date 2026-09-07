@@ -20,7 +20,8 @@ import {
 } from '../lib/serialize.js';
 import { uniqueSlug } from '../lib/slug.js';
 import { fileStore } from '../lib/storage.js';
-import { TelegramError, sendProjectUpdateToChannel } from '../lib/telegram.js';
+import { getSettings, sendBackupToSubscribers } from '../lib/backup.js';
+import { TelegramError, hasTelegram, sendProjectUpdateToChannel } from '../lib/telegram.js';
 import { extractYoutubeId } from '../lib/youtube.js';
 import { prisma } from '../prisma.js';
 
@@ -410,6 +411,74 @@ adminRouter.delete(
     if (!video) return res.status(404).json({ error: 'Video topilmadi' });
 
     await prisma.youtubeVideo.delete({ where: { id: video.id } });
+    res.json({ ok: true });
+  }),
+);
+
+// --- Zaxira nusxa (Telegram orqali) ---
+
+adminRouter.get(
+  '/backup',
+  ah(async (_req, res) => {
+    const [settings, subscribers] = await Promise.all([
+      getSettings(),
+      prisma.backupSubscriber.findMany({ orderBy: { createdAt: 'asc' } }),
+    ]);
+    res.json({
+      enabled: settings.enabled,
+      intervalHours: settings.intervalHours,
+      lastRunAt: settings.lastRunAt?.toISOString() ?? null,
+      botConfigured: hasTelegram(),
+      subscribers: subscribers.map((s) => ({
+        id: s.id,
+        name: s.firstName ?? s.username,
+        createdAt: s.createdAt.toISOString(),
+        lastSentAt: s.lastSentAt?.toISOString() ?? null,
+      })),
+    });
+  }),
+);
+
+adminRouter.put(
+  '/backup',
+  ah(async (req, res) => {
+    const parsed = z
+      .object({
+        enabled: z.boolean(),
+        intervalHours: z.number().int().min(1).max(720),
+      })
+      .safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ error: 'Sozlama notoʻgʻri' });
+
+    await getSettings();
+    const updated = await prisma.backupSetting.update({
+      where: { id: 'default' },
+      data: parsed.data,
+    });
+    res.json({ enabled: updated.enabled, intervalHours: updated.intervalHours });
+  }),
+);
+
+adminRouter.post(
+  '/backup/send',
+  ah(async (_req, res) => {
+    const subscribers = await prisma.backupSubscriber.count();
+    if (subscribers === 0) {
+      return res.status(400).json({
+        error: 'Obunachi yoʻq — Telegram botga /login orqali tasdiqlaning',
+      });
+    }
+    const result = await sendBackupToSubscribers('qoʻlda soʻralgan');
+    res.json(result);
+  }),
+);
+
+adminRouter.delete(
+  '/backup/subscribers/:id',
+  ah(async (req, res) => {
+    const sub = await prisma.backupSubscriber.findUnique({ where: { id: req.params.id } });
+    if (!sub) return res.status(404).json({ error: 'Obunachi topilmadi' });
+    await prisma.backupSubscriber.delete({ where: { id: sub.id } });
     res.json({ ok: true });
   }),
 );

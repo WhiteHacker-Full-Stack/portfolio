@@ -56,10 +56,11 @@ const code: string = await new Promise((resolve, reject) => {
   });
 
   server.listen(PORT);
+  // Brauzerda akkaunt tanlash va ogohlantirishdan o'tish vaqt oladi — shoshiltirmaymiz.
   setTimeout(() => {
     server.close();
-    reject(new Error('vaqt tugadi (5 daqiqa)'));
-  }, 5 * 60 * 1000);
+    reject(new Error('vaqt tugadi (30 daqiqa)'));
+  }, 30 * 60 * 1000);
 });
 
 const res = await fetch('https://oauth2.googleapis.com/token', {

@@ -78,3 +78,22 @@ model AdminUser {
   username     String @unique
   passwordHash String
 }
+
+/// Telegram orqali zaxira nusxa oladigan, login/parol bilan tasdiqlangan suhbatlar.
+model BackupSubscriber {
+  id         String    @id @default(cuid())
+  chatId     String    @unique
+  username   String
+  firstName  String?
+  createdAt  DateTime  @default(now())
+  lastSentAt DateTime?
+}
+
+/// Bitta qatorli sozlama (id = "default").
+model BackupSetting {
+  id            String    @id @default("default")
+  enabled       Boolean   @default(false)
+  intervalHours Int       @default(24)
+  lastRunAt     DateTime?
+  updatedAt     DateTime  @updatedAt
+}
