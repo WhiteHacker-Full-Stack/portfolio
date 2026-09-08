@@ -57,7 +57,7 @@ export default async function ProjectsPage({
           Bu bo&apos;limda hali loyiha yo&apos;q.
         </div>
       ) : (
-        <div style={s('display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;')}>
+        <div className="wh-grid-3" style={s('display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;')}>
           {projects.map((project) => {
             const status = STATUS_COLOR[project.status] ?? STATUS_COLOR.ARCHIVED;
             return (

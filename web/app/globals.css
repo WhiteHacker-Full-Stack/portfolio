@@ -27,3 +27,75 @@ input, textarea, select, button { font-family: inherit; }
 .f1-border:focus { outline: 2px solid #4FD1FF; outline-offset: 1px; border-color: #4FD1FF; }
 
 ::placeholder { color: #4a5764; }
+
+/* --- Mobil va planshet --------------------------------------------------
+   Dizayn faqat kompyuter uchun chizilgan: qat'iy 268px yon panel va uch
+   ustunli gridlar. Quyidagi qoidalar faqat tor ekranlarda ishlaydi —
+   keng ekrandagi ko'rinish o'zgarmaydi.
+   Inline stillar ustidan yozish uchun !important shart.                    */
+
+@media (max-width: 900px) {
+  .wh-shell {
+    flex-direction: column !important;
+  }
+
+  /* Yon panel tepaga chiqadi: yopishib turmaydi, balandligi kontentga qarab */
+  .wh-side {
+    width: 100% !important;
+    flex: none !important;
+    height: auto !important;
+    position: static !important;
+    border-right: none !important;
+    border-bottom: 1px solid #26323D !important;
+    padding: 18px 16px !important;
+    gap: 16px !important;
+  }
+
+  /* Menyu gorizontal oqadi */
+  .wh-nav {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+  }
+  .wh-nav > div:first-child { display: none !important; }   /* "whitehacker@portfolio" sarlavhasi */
+  .wh-nav > a > span:first-child { display: none !important; }  /* daraxt belgilari ├─ │ └─ */
+  .wh-nav > a > span { padding-left: 0 !important; }
+
+  .wh-side-foot {
+    margin-top: 0 !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+  }
+
+  .wh-main {
+    padding: 22px 16px 60px !important;
+    max-width: 100% !important;
+  }
+
+  /* Gridlar bir ustunga tushadi */
+  .wh-grid-3,
+  .wh-grid-2,
+  .wh-split {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+  .wh-split { gap: 30px !important; }
+  .wh-grid-4 { grid-template-columns: 1fr 1fr !important; }
+
+  /* Sana ustuni ustiga chiqadi */
+  .wh-row {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .wh-hero { font-size: 30px !important; }
+  .wh-hero-body { padding: 24px 20px 28px !important; }
+  h1 { font-size: clamp(24px, 7vw, 32px) !important; }
+}
+
+@media (max-width: 560px) {
+  .wh-grid-4 { grid-template-columns: 1fr !important; }
+  .wh-hero { font-size: 25px !important; }
+}

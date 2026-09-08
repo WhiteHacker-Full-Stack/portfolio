@@ -80,13 +80,13 @@ function Sidebar() {
   const cat = useSearchParams().get('cat') ?? 'manual';
 
   return (
-    <aside style={s('width: 268px; flex: 0 0 268px; border-right: 1px solid #26323D; background: rgba(15,23,32,0.72); padding: 26px 18px 20px; display: flex; flex-direction: column; gap: 26px; position: sticky; top: 0; height: 100vh;')}>
+    <aside className="wh-side" style={s('width: 268px; flex: 0 0 268px; border-right: 1px solid #26323D; background: rgba(15,23,32,0.72); padding: 26px 18px 20px; display: flex; flex-direction: column; gap: 26px; position: sticky; top: 0; height: 100vh;')}>
       <Link href="/" style={s("font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 15px; letter-spacing: 0.06em; display: flex; align-items: center; gap: 2px; color: #F5F7FA;")}>
         <span style={s('color: #4FD1FF;')}>&gt;_</span>WhiteHacker
         <span style={s('display: inline-block; width: 8px; height: 15px; background: #4FD1FF; animation: blink 1.1s steps(1) 3;')} />
       </Link>
 
-      <nav style={s('display: flex; flex-direction: column; gap: 1px;')}>
+      <nav className="wh-nav" style={s('display: flex; flex-direction: column; gap: 1px;')}>
         <div style={s("font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8B99A6; letter-spacing: 0.08em; padding: 0 8px 10px;")}>
           whitehacker@portfolio
         </div>
@@ -108,7 +108,7 @@ function Sidebar() {
         })}
       </nav>
 
-      <div style={s('margin-top: auto; display: flex; flex-direction: column; gap: 14px;')}>
+      <div className="wh-side-foot" style={s('margin-top: auto; display: flex; flex-direction: column; gap: 14px;')}>
         <div style={s('display: flex; gap: 10px;')}>
           <a
             href="https://t.me/whitehackerstudio"
@@ -137,11 +137,11 @@ function Sidebar() {
 
 export function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div style={s('min-height: 100vh; display: flex; background: #0B0F14; background-image: linear-gradient(rgba(79,209,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(79,209,255,0.05) 1px, transparent 1px), radial-gradient(circle at 18% 22%, rgba(79,209,255,0.06), transparent 45%); background-size: 46px 46px, 46px 46px, 100% 100%; color: #E8EDF2; font-family: Inter, system-ui, sans-serif;')}>
+    <div className="wh-shell" style={s('min-height: 100vh; display: flex; background: #0B0F14; background-image: linear-gradient(rgba(79,209,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(79,209,255,0.05) 1px, transparent 1px), radial-gradient(circle at 18% 22%, rgba(79,209,255,0.06), transparent 45%); background-size: 46px 46px, 46px 46px, 100% 100%; color: #E8EDF2; font-family: Inter, system-ui, sans-serif;')}>
       <Suspense>
         <Sidebar />
       </Suspense>
-      <main style={s('flex: 1; min-width: 0; padding: 30px 44px 90px; max-width: 1180px;')}>
+      <main className="wh-main" style={s('flex: 1; min-width: 0; padding: 30px 44px 90px; max-width: 1180px;')}>
         <Suspense>
           <PromptLine />
         </Suspense>

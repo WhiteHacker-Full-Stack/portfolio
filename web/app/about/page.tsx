@@ -49,7 +49,7 @@ const BIO = [
 export default function AboutPage() {
   return (
     <section style={s('display: flex; flex-direction: column; gap: 48px;')}>
-      <div style={s('display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px;')}>
+      <div className="wh-split" style={s('display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px;')}>
         <div style={s('display: flex; flex-direction: column; gap: 18px;')}>
           <h1 style={s("margin: 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 32px;")}>
             Men haqimda
@@ -90,7 +90,7 @@ export default function AboutPage() {
         </h2>
         <div style={s('display: flex; flex-direction: column;')}>
           {TIMELINE.map((item) => (
-            <div key={item.year} style={s('display: grid; grid-template-columns: 92px 1fr; gap: 20px; padding-bottom: 26px;')}>
+            <div key={item.year} className="wh-row" style={s('display: grid; grid-template-columns: 92px 1fr; gap: 20px; padding-bottom: 26px;')}>
               <span style={s("font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8B99A6; padding-top: 2px;")}>
                 {item.year}
               </span>

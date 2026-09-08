@@ -23,11 +23,11 @@ export default async function HomePage() {
             bash — whoami
           </span>
         </div>
-        <div style={s('padding: 34px 34px 40px; display: flex; flex-direction: column; gap: 22px;')}>
+        <div className="wh-hero-body" style={s('padding: 34px 34px 40px; display: flex; flex-direction: column; gap: 22px;')}>
           <div style={s("font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #8B99A6;")}>
             <span style={s('color: #39FF88;')}>$ </span>whoami
           </div>
-          <h1 style={s("margin: 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 46px; line-height: 1.1; letter-spacing: -0.01em; color: #F5F7FA;")}>
+          <h1 className="wh-hero" style={s("margin: 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 46px; line-height: 1.1; letter-spacing: -0.01em; color: #F5F7FA;")}>
             Men WhiteHacker —<br />Full Stack Web Developer<br />va Wibe Coder
           </h1>
           <p style={s('margin: 0; max-width: 620px; font-size: 16px; line-height: 1.7; color: #8B99A6; text-wrap: pretty;')}>
@@ -63,7 +63,7 @@ export default async function HomePage() {
             oxirgi {recentPosts.length} yozuv
           </span>
         </div>
-        <div style={s('display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;')}>
+        <div className="wh-grid-3" style={s('display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;')}>
           {recentPosts.map((post) => (
             <Link
               key={post.id}
@@ -85,7 +85,7 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <div style={s('display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid #26323D; border-radius: 10px; overflow: hidden; background: #0F1720;')}>
+      <div className="wh-grid-4" style={s('display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid #26323D; border-radius: 10px; overflow: hidden; background: #0F1720;')}>
         {[
           { value: stats.projects, label: 'LOYIHA' },
           { value: stats.startups, label: 'STARTAP' },
@@ -110,7 +110,7 @@ export default async function HomePage() {
         <h2 style={s("margin: 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px;")}>
           Ijtimoiy tarmoqlarda kuzatib boring
         </h2>
-        <div style={s('display: grid; grid-template-columns: 1fr 1fr; gap: 16px;')}>
+        <div className="wh-grid-2" style={s('display: grid; grid-template-columns: 1fr 1fr; gap: 16px;')}>
           <div style={s('border: 1px solid #26323D; background: #141C24; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 14px;')}>
             <div style={s('display: flex; align-items: center; justify-content: space-between;')}>
               <span style={s("font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px;")}>

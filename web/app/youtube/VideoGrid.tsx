@@ -19,7 +19,7 @@ export function VideoGrid({ videos }: { videos: Video[] }) {
 
   return (
     <>
-      <div style={s('display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;')}>
+      <div className="wh-grid-3" style={s('display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;')}>
         {videos.map((video) => (
           <button
             key={video.id}

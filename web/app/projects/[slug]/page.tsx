@@ -101,7 +101,7 @@ export default async function ProjectDetailPage({
         ) : (
           <div style={s('display: flex; flex-direction: column;')}>
             {project.posts.map((post) => (
-              <div key={post.id} style={s('display: grid; grid-template-columns: 104px 1fr; gap: 20px; padding-bottom: 28px;')}>
+              <div key={post.id} className="wh-row" style={s('display: grid; grid-template-columns: 104px 1fr; gap: 20px; padding-bottom: 28px;')}>
                 <span style={s("font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8B99A6; padding-top: 3px;")}>
                   {uzDate(post.createdAt)}
                 </span>
