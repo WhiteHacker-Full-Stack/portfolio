@@ -19,7 +19,7 @@ export default async function YoutubePage() {
       <h1 style={s("margin: 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 32px;")}>
         YouTube
       </h1>
-      <div style={s('border: 1px solid #26323D; border-radius: 12px; background: #0F1720; padding: 26px 28px; display: flex; align-items: center; justify-content: space-between; gap: 24px;')}>
+      <div className="wh-yt-head" style={s('border: 1px solid #26323D; border-radius: 12px; background: #0F1720; padding: 26px 28px; display: flex; align-items: center; justify-content: space-between; gap: 24px;')}>
         <div style={s('display: flex; flex-direction: column; gap: 8px;')}>
           <span style={s("font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 20px;")}>
             @WhiteHacker-studio

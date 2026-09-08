@@ -34,6 +34,11 @@ input, textarea, select, button { font-family: inherit; }
    keng ekrandagi ko'rinish o'zgarmaydi.
    Inline stillar ustidan yozish uchun !important shart.                    */
 
+/* Kichik noutbuklar: uch ustun juda siqilib qoladi (kartalar ~210px) */
+@media (max-width: 1200px) and (min-width: 901px) {
+  .wh-grid-3 { grid-template-columns: 1fr 1fr !important; }
+}
+
 @media (max-width: 900px) {
   .wh-shell {
     flex-direction: column !important;
@@ -98,4 +103,30 @@ input, textarea, select, button { font-family: inherit; }
 @media (max-width: 560px) {
   .wh-grid-4 { grid-template-columns: 1fr !important; }
   .wh-hero { font-size: 25px !important; }
+
+  /* Hujjat qatori: nom tepada, tugmalar pastda */
+  .wh-doc-row {
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+  }
+  .wh-doc-actions {
+    width: 100% !important;
+    flex-wrap: wrap !important;
+  }
+
+  /* YouTube kanal kartasi: obuna tugmasi pastga tushadi */
+  .wh-yt-head {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 20px !important;
+    gap: 16px !important;
+  }
+}
+
+/* Eng tor telefonlar (320px) — matn va tugmalar sig'ishi uchun */
+@media (max-width: 380px) {
+  .wh-main { padding: 18px 12px 50px !important; }
+  .wh-side { padding: 14px 12px !important; }
+  .wh-hero { font-size: 22px !important; }
+  .wh-hero-body { padding: 18px 14px 22px !important; }
 }

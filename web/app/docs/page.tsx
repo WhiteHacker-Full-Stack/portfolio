@@ -29,6 +29,7 @@ export default async function DocsPage() {
         {documents.map((doc) => (
           <div
             key={doc.id}
+            className="wh-doc-row"
             style={s('display: flex; align-items: center; gap: 18px; border: 1px solid #26323D; background: #141C24; border-radius: 10px; padding: 16px 18px;')}
           >
             <span style={s("width: 40px; height: 48px; border: 1px solid #26323D; border-radius: 5px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 5px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #8B99A6; background: #0F1720;")}>

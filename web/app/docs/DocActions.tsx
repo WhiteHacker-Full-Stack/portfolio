@@ -21,7 +21,7 @@ export function DocActions({ fileUrl }: { fileUrl: string }) {
   }, []);
 
   return (
-    <span style={s('display: flex; gap: 10px; align-items: center;')}>
+    <span className="wh-doc-actions" style={s('display: flex; gap: 10px; align-items: center;')}>
       <a href={fileUrl} target="_blank" rel="noreferrer" className="h-cyan f2" style={s(VIEW)}>
         Ko&apos;rish
       </a>
